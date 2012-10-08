@@ -1,5 +1,10 @@
 VERSION=
-LATEXTARGET=thesis$(VERSION)
+LATEXTARGET=dissertation$(VERSION)
+
+all: proposal.pdf dissertation.pdf
+
+prop: proposal.pdf
+diss: dissertation.pdf
 
 #
 # LaTeX Makefile
