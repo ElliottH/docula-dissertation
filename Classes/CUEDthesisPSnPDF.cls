@@ -210,7 +210,7 @@
 %  \null\vfill
   \begin{center}
     { \Huge {\bfseries {\@title}} \par}
-{\large \vspace*{35mm} {{\@crest} \par} \vspace*{25mm}}
+{\large \vspace*{35mm} }%{{\@crest} \par} \vspace*{25mm}}
     {{\Large \@author} \par}
 {\large \vspace*{1ex}
     {{\@collegeordept} \par}
