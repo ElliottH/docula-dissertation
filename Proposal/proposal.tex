@@ -45,6 +45,17 @@ describe a piece of software thoroughly:
   function, rather than its intended use.
 \end{description}
 
+For an engine such as this to be useful and practical, all
+language-specific input \& output should be separated from the
+processing as far as is possible; as such, this project will be highly
+modular in nature. It is my intention to split the project into three
+sections: input parsing, processing and output formatting; this will
+allow new modules for different source languages to be written without
+affecting the any other languages, and the same with various output
+formats (e.g. \LaTeX, HTML).
+
+\pagebreak
+
 \section{Starting Point}
 
 Several other documentation engines exist, such as Doxygen \& Javadoc,
@@ -72,70 +83,87 @@ I require no other special resources.
 
 \section{Work to be done}
 
-{\em Describe the technical work.}
-
-The project breaks down into the following sub-projects:
+The project is made up of four main components:
 
 \begin{enumerate}
 
-\item The construction of a skeleton dissertation with the required 
-structure. This involves writing the Makefile and makeing dummy files
-for the title page, the proforma, chapters 1 to 5, the appendices and
-the proposal.
-
-\item Filling in the details required in the cover page and proforma.
-
-\item Writing the contents of chapters 1 to 5, including examples
-of common \LaTeX\ constructs.
-
-\item Adding a example of how to use floating figures and encapsulated
-postscript diagrams.
-
+\item Define a format of comment that is to be used for documentation
+  and create a parser for it. This will involve designing the comment
+  format to be as compatible with doxygen's style as far as possible.
+\item Produce the main processing component of the system, that will
+  convert parsed data from an input module and transform it into a
+  data structure that contains the documentation in an output format
+  agnostic format.
+\item Write an output module to take the documentation data and
+  transform it into a human readable document.
+\item Create a command line interface \& configuration file format to
+  allow for tuning of the processing/output.
 \end{enumerate}
 
 \section{Success Criterion for the Main Result}
 
+In order to evaluate the project, I shall be testing the software by
+running it over the code bases of real world open-source projects that
+already contain a doxygen-style documentation comments and examining
+the outputted documentation.
 
-The project will be a success if I have a completed dissertation with the correct chapter
-titles and I have achieved my other success criterion, which is to blah ...
-
-
+As part of this, Dr. Watts has agreed that I may test it on some of
+the open-source code developed by his company, I will then be able to
+survey the writers of the source code to collect their opinions on the
+output and examine the results.
 
 \section{Possible Extensions}
 
-{\em Potential further envisaged evaluation metrics or extensions.}
+\begin{itemize}
+\item Given that the software will be designed to be highly modular,
+  the input module could be adapted into a plug-in for a text editor
+  that highlights discrepancies between documentation and code. For
+  example if the documentation defines a different number of arguments
+  from the function prototype, highlighting it appropriately.
+\item Using LLVM to perform static analysis on the code, to determine
+  if arguments defined as in, out or in/out are actually used in that
+  way, and flagging it up to the user if they are not.
+\end{itemize}
 
-If I achieve my main result early I shall try the following alternative experiment or method of evaluation ...
+\section{Timetable: Workplan and Milestones to be Achieved}
 
-
-\section{Timetable: Workplan and Milestones to be achieved.}
-
-
-{\em Perhaps list ten or so  two-week work-packages.}
-
-Planned starting date is 16/10/2011.
+Planned starting date is 18/10/2011.
 
 \begin{enumerate}
 
-\item {\bf Michaelmas weeks 2-4} Learn to use X. Read book Y. Read papers Z.
+\item {\bf Michaelmas week 2 -} Study doxygen's comment format and
+  design new comment format to be used.
 
-\item {\bf Michaelmas weeks 5-6} Do preliminary test of Q.
+\item {\bf Michaelmas week 3 -} Revise parsers and implement a basic
+  test one.
 
-\item {\bf Michaelmas weeks 7-8} Start implementation of main task A.
+\item {\bf Michaelmas weeks 4--6 -} Write a parser to interpret
+  appropriately styled comments.
 
-\item {\bf Michaelmas vacation} Finish A and start main task B.
+\item {\bf Michaelmas weeks 7--8 -} Write an output module to produce a
+  human-readable document from appropriately structured data.
 
-\item {\bf Lent weeks 0-2} Write progress report. Generate corpus of test examples. Finish task B.  
+\item {\bf Michaelmas vacation -} Create the main processing module to
+  convert from a parse tree into the data structure required by the
+  output module.
 
-\item {\bf Lent weeks 3-5} Run main experiments and achieve working project.
+\item {\bf Lent weeks 0--2 -} Write progress report. Initial testing on
+  open-source projects.
 
-\item {\bf Lent weeks 6-8} Second main deliverable here.
+\item {\bf Lent weeks 3--5 -} Improvements \& optimisations to code to
+  improve user-friendliness of output and process.
 
-\item {\bf Easter vacation:} Extensions and writing dissertation main chapters.
+\item {\bf Lent weeks 6--8 -} Engine should work by this point; thorough
+  testing on large source-trees takes place.
 
-\item {\bf Easter term 0-2:}  Further evaluation and complete dissertation.
+\item {\bf Easter vacation -} Time reserved for fixes and/or possible
+  extensions. Main writing of dissertation chapters.
 
-\item {\bf Easter term 3:} Proof reading and then an early submission so as to concentrate on examination revision.
+\item {\bf Easter term 0--2 -} Main evaluation with Dr. Watt's source and round off dissertation.
+
+\item {\bf Easter term 3 -} Final proofing \& binding; early submission.
+
+\item {\bf Easter term 4+ -} Revision for examinations.
 
 \end{enumerate}
 
