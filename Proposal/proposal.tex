@@ -1,38 +1,75 @@
-% Draft #1 (final?)
+\section{Introduction, The Problem To Be Addressed}
 
-% Main document
+In the development and maintenance of software, especially those
+containing large amounts of code, documentation frequently becomes a
+problem. Often documentation is written separately from the code
+itself, and as such the two diverge over time, leaving maintainers
+worse of than they'd never checked both in the first place. It is the
+aim of this project to tackle this problem and to facilitate not only
+the writing of correct and thorough documentation, but also the easy
+maintenance of both code and documentation; this is to be achieved by
+defining a syntax to interleave code with documentation, so that both
+are kept together and so are more easily kept in synchronisation with
+one another.
 
-\section*{Introduction, The Problem To Be Addressed}
+It is important to distinguish between the two types of documentation
+that occur in software development\footnote{The naming of these is
+purely of my own invention, and as far as I'm aware is not part of any
+established convention; I will, however, be using these names
+throughout.} Together, these two types of documentation should
+describe a piece of software thoroughly:
+\begin{description}
+\item[Interface documentation] essentially defines a contract with the
+outside world as to what this function or class does, what it expects
+as input to give a valid output, what may (or may not) happen when
+given invalid inputs, and so on.
 
+It is important that \emph{interface documentation} be well-defined,
+as it is what informs another developer now or in the future as to
+what the function is \emph{supposed} to do.
 
-Many students write their CST dissertations in \LaTeX\ and
-spend a fair amount of time learning just how to do that. The purpose of 
-this project is to write a demonstration dissertation that explains in
-detail how it done.  
+\item[Implementation documentation] is essentially the comments that
+developers put (or rather, should put) into their code that
+explains \emph{how} and \emph{why} they are doing things the way
+they're doing them. These comments should be written with the
+expectation that someone else in the future may actually be using them
+to track down the relevant piece of code they looking to fix or
+update, as such they should be written as proper sentences and written
+in such a way that the comments can be combined into a full document
+that talks its way through the function.
 
-This core proposal document will be augmented by a separately-printed
-cover sheet at the front and a resource form at the end.  Additional
-sheets for risk assessment and human resources may also need to be included.
+The \emph{implementation documentation} does not need to be as
+strictly defined as the \emph{interface documentation}, as it is more
+a process of describing the choices made in writing the function,
+rather than its intended use.
+\end{description}
 
-This document will repeat much of the material that is summarised on the additional sheets.
+\section{Starting Point}
 
-\section*{Starting Point}
+Several other documentation engines exist, such as Doxygen \& Javadoc,
+however none of them seem to account for the two distinct types of
+documentation that exist within a code base. I have used both Doxygen
+\& Javadoc to document projects in the past, and so I am familiar with
+the style in which the comments used for the documentation are
+written.
 
-{\em Describe existing state of the art, previous work in this area, libraries and databases to be used.
-Describe the state of any existing codebase that is to be built on.  }
+Since that there is already wide use of these, particularly Doxygen,
+I will be designing my syntax to be as compatible with theirs as
+possible. This will allow users to easily switch between the two and
+allow for increased uptake of the engine.
 
-I am already able to write prose using the English language. I have an online dictionary. etc..
+\section{Resources Required}
 
-\section*{Resources Required}
+I shall be primarily be using my own computer for the development of
+this project, which is currently a laptop running Mac OS X; I will
+also be using the PWF machines, to ensure that the software produced
+runs across a variety of UNIX-like operating systems. The project
+shall be backed up to a git repository on BitBucket, and also to the
+PWF.
 
-{\em A note of the resources required and confirmation of access.}
-
-For this project I shall mainly use my own quad-core computer that runs Fedora Linux. Backup
-will be to github and/or to an SVN repository on an external hard disk that is dumped to writable CD/DVD media.
-I have another similar computer to hand should my main machine suddenly fail.
 I require no other special resources.
 
-\section*{Work to be done}
+\section{Work to be done}
 
 {\em Describe the technical work.}
 
@@ -55,7 +92,7 @@ postscript diagrams.
 
 \end{enumerate}
 
-\section*{Success Criterion for the Main Result}
+\section{Success Criterion for the Main Result}
 
 
 The project will be a success if I have a completed dissertation with the correct chapter
@@ -63,14 +100,14 @@ titles and I have achieved my other success criterion, which is to blah ...
 
 
 
-\section*{Possible Extensions}
+\section{Possible Extensions}
 
 {\em Potential further envisaged evaluation metrics or extensions.}
 
 If I achieve my main result early I shall try the following alternative experiment or method of evaluation ...
 
 
-\section*{Timetable: Workplan and Milestones to be achieved.}
+\section{Timetable: Workplan and Milestones to be achieved.}
 
 
 {\em Perhaps list ten or so  two-week work-packages.}
