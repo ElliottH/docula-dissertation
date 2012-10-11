@@ -1,19 +1,19 @@
-\section{Introduction, The Problem To Be Addressed}
+\section{Introduction: The Problem To Be Addressed}
 
 In the development and maintenance of software, especially those
 containing large amounts of code, documentation frequently becomes a
 problem. Often documentation is written separately from the code
 itself, and as such the two diverge over time, leaving maintainers
-worse of than they'd never checked both in the first place. It is the
-aim of this project to tackle this problem and to facilitate not only
-the writing of correct and thorough documentation, but also the easy
-maintenance of both code and documentation; this is to be achieved by
-defining a syntax to interleave code with documentation, so that both
-are kept together and so are more easily kept in synchronisation with
-one another.
+worse off than if they'd never checked both in the first place. It is
+the aim of this project to tackle this problem and to facilitate not
+only the writing of correct and thorough documentation, but also the
+easy maintenance of both code and documentation; this is to be
+achieved by defining a syntax to interleave code with documentation,
+so that both are kept together and are more easily kept in
+synchronisation with one another.
 
 It is important to distinguish between the two types of documentation
-that occur in software development\footnote{The naming of these is
+that occur in software development.\footnote{The naming of these is
 purely of my own invention, and as far as I'm aware is not part of any
 established convention; I will, however, be using these names
 throughout.} Together, these two types of documentation should
@@ -65,8 +65,8 @@ documentation that exist within a code base. I have used both Doxygen
 the style in which the comments used for the documentation are
 written.
 
-Since that there is already wide use of these, particularly Doxygen,
-I will be designing my syntax to be as compatible with theirs as
+Since there is already wide use of these, particularly Doxygen, I will
+be designing my syntax to be as compatible with theirs as
 possible. This will allow users to easily switch between the two and
 allow for increased uptake of the engine.
 
@@ -89,7 +89,7 @@ The project is made up of four main components:
 
 \item Define a format of comment that is to be used for documentation
   and create a parser for it. This will involve designing the comment
-  format to be as compatible with doxygen's style as far as possible.
+  format to be as compatible with Doxygen's style as far as possible.
 \item Produce the main processing component of the system, that will
   convert parsed data from an input module and transform it into a
   data structure that contains the documentation in an output format
@@ -104,10 +104,10 @@ The project is made up of four main components:
 
 In order to evaluate the project, I shall be testing the software by
 running it over the code bases of real world open-source projects that
-already contain a doxygen-style documentation comments and examining
+already contain a Doxygen-style documentation comments and examining
 the outputted documentation.
 
-As part of this, Dr. Watts has agreed that I may test it on some of
+As part of this, Dr.~Watts has agreed that I may test it on some of
 the open-source code developed by his company, I will then be able to
 survey the writers of the source code to collect their opinions on the
 output and examine the results.
@@ -121,7 +121,7 @@ output and examine the results.
   example if the documentation defines a different number of arguments
   from the function prototype, highlighting it appropriately.
 \item Using LLVM to perform static analysis on the code, to determine
-  if arguments defined as in, out or in/out are actually used in that
+  if arguments defined as \emph{in}, \emph{out} or \emph{in/out} are actually used in that
   way, and flagging it up to the user if they are not.
 \end{itemize}
 
@@ -131,7 +131,7 @@ Planned starting date is 18/10/2011.
 
 \begin{enumerate}
 
-\item {\bf Michaelmas week 2 -} Study doxygen's comment format and
+\item {\bf Michaelmas week 2 -} Study Doxygen's comment format and
   design new comment format to be used.
 
 \item {\bf Michaelmas week 3 -} Revise parsers and implement a basic
@@ -159,7 +159,7 @@ Planned starting date is 18/10/2011.
 \item {\bf Easter vacation -} Time reserved for fixes and/or possible
   extensions. Main writing of dissertation chapters.
 
-\item {\bf Easter term 0--2 -} Main evaluation with Dr. Watt's source and round off dissertation.
+\item {\bf Easter term 0--2 -} Main evaluation with Dr.~Watt's source and round off dissertation.
 
 \item {\bf Easter term 3 -} Final proofing \& binding; early submission.
 
