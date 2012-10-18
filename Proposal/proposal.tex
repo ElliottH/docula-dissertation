@@ -54,8 +54,6 @@ allow new modules for different source languages to be written without
 affecting the any other languages, and the same with various output
 formats (e.g. \LaTeX, HTML).
 
-\pagebreak
-
 \section{Starting Point}
 
 Several other documentation engines exist, such as Doxygen \& Javadoc,
@@ -76,28 +74,37 @@ I shall be primarily be using my own computer for the development of
 this project, which is currently a laptop running Mac OS X; I will
 also be using the PWF machines, to ensure that the software produced
 runs across a variety of UNIX-like operating systems. The project
-shall be backed up to a git repository on BitBucket, and also to the
+will be backed up to a git repository on BitBucket, and also to the
 PWF.
 
 I require no other special resources.
 
 \section{Work to be done}
 
-The project is made up of four main components:
+The project is made up of five main components:
 
 \begin{enumerate}
 
 \item Define a format of comment that is to be used for documentation
   and create a parser for it. This will involve designing the comment
   format to be as compatible with Doxygen's style as far as possible.
+  At this point I should be able to turn appropriately documented
+  source files into a parsed tree quickly \& accurately.
 \item Produce the main processing component of the system, that will
   convert parsed data from an input module and transform it into a
   data structure that contains the documentation in an output format
-  agnostic format.
+  agnostic format. I should now be able to produce data structure that
+  represents the documentation.
+\item Develop an abstract model of an output format; this should define
+  how the output is broken up into sections and how the various parts
+  are linked together.
 \item Write an output module to take the documentation data and
-  transform it into a human readable document.
+  transform it into a human readable document. At this point it should
+  be possible to produce proper documentation that is readable and easy
+  to use.
 \item Create a command line interface \& configuration file format to
-  allow for tuning of the processing/output.
+  allow for tuning of the processing/output. This should make the system
+  user-friendly and behave in an expected way.
 \end{enumerate}
 
 \section{Success Criterion for the Main Result}
@@ -111,6 +118,18 @@ As part of this, Dr.~Watts has agreed that I may test it on some of
 the open-source code developed by his company, I will then be able to
 survey the writers of the source code to collect their opinions on the
 output and examine the results.
+
+The outline for testing is as follows:
+\begin{itemize}
+    \item Check that the documentation format is appropriate \& usable; a
+    questionnaire will be used for this.
+    \item Test that the tool successfully runs to completion on large code
+    bases.
+    \item Manual comparison with the original comments to ensure that the output
+    is correctly formatted.
+    \item Test that the outputted document is useful; this will be done with a
+    questionnaire.
+\end{itemize}
 
 \section{Possible Extensions}
 
@@ -154,7 +173,7 @@ Planned starting date is 18/10/2011.
   improve user-friendliness of output and process.
 
 \item {\bf Lent weeks 6--8 -} Engine should work by this point; thorough
-  testing on large source-trees takes place. Main evaluation with Dr.~Watt's source.
+  testing on large source-trees takes place. Main evaluation with Dr.~Watts' source.
 
 \item {\bf Easter vacation -} Time reserved for fixes and/or possible
   extensions. Main writing of dissertation chapters.
@@ -166,5 +185,5 @@ Planned starting date is 18/10/2011.
 \end{enumerate}
 
 
- 
+
 
