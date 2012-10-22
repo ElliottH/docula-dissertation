@@ -5,4 +5,10 @@
 *.toc
 *.out
 
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+
+*.sublime-workspace
+
 *.pdf
