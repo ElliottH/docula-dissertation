@@ -1,0 +1,90 @@
+\documentclass[10pt,oneside,a4paper]{article}
+\usepackage{setspace}
+\onehalfspacing
+\begin{document}
+
+\vfil
+
+\centerline{\Large Progress Report}
+\vspace{0.4in}
+\centerline{\Large A Documentation Generation Engine }
+\vspace{0.4in}
+\centerline{\large E. Hillary, Girton College}
+\vspace{0.3in}
+\centerline{\large ejh67@cam.ac.uk}
+\vspace{0.3in}
+\centerline{\large 30$^{th}$ January 2013}
+
+\vfil
+
+
+\noindent
+{\bf Project Supervisor:} Dr.~R.~R.~Watts
+\vspace{0.2in}
+
+\noindent
+{\bf Director of Studies:} C.~K.~Hadley
+\vspace{0.2in}
+\noindent
+
+\noindent
+{\bf Project Overseers:} Prof.~R.~J.~Anderson  \& Prof.~J.~M.~Bacon
+
+\vfil
+\newpage
+
+\section*{Progress Made}
+Currently, the project is capable of taking valid C code and producing a basic
+HTML output of documentation extracted from the code; at the time of writing,
+the HTML output is relatively un-styled \& basic, however it is within the scope
+of the project to make the output functional rather than aesthetically pleasing.
+Improvements to the design of the output were originally to be improved in weeks
+3--5 of this term, and may well still be depending on the ease of resolution of
+other problems.
+
+At the moment, very little cross-referencing occurs between compilation units,
+so, for example, a type defined in a header file and referred to in a source
+file will not link back to its definition. This has not been completed due to
+time-constraints and problems encountered in other parts of the project,
+mentioned below.
+
+According to the original timetable put forward in my Project Proposal, the two
+weeks at the start of Lent term were allocated for initial testing on real-world
+projects; while some has taken place, it has produced poorer results than
+anticipated. This will mean that more time will be needed to resolve these
+problems than I expected, and as such optimisations and extensions to the
+project are unlikely to take place.
+
+\section*{Problems Encountered}
+Creating a Parsing Expression Grammar for C proved much harder than anticipated,
+and as a result writing the parser took about two weeks longer than expected.
+Implementation was troublesome due to the breadth \& depth of the C
+specification, and the parser got to the point where its complexity was so great
+that making progress in one area broke another.
+
+This problem was resolved by creating a new, simpler parser, that understood
+enough C to know how to parse out the required parts. This included things like
+not parsing function bodies any more than was necessary to work out where the
+end of the function was. Fortunately, writing the initial parser wasn't a waste
+of time, as it made me much more familiar with the oddities of C syntax and with
+PEG parsers and allowed the writing of the simpler parser to take place quickly.
+It also allowed me to learn first-hand how to deal with left recursion problems
+in parsing.
+\\
+\\
+I also found it difficult to implement my project in the order I had originally
+laid out in the timetable, where I had listed that the output stage would be
+written before the processing stage; I had originally put them in this order
+because I thought it would help increase the modularity of the project. However,
+this proved troublesome because it was hard to visualise what structure the data
+would be in for the output stage to work with without knowing what was feasible
+to do in the processing stage. Unfortunately, the result of this is that there
+isn't a clearly distinct processing stage in the project any more, rather the
+output stage works directly from the data stored by the input stage.
+\\
+\\
+Given the problems encountered, Dr.~Watts and I plan to discuss if any
+replanning is required; however a meeting between us was unable to take place
+in time to add the appropriate information to this progress report, our
+discussion will have taken place by the progress meeting.
+\end{document}
