@@ -2,9 +2,9 @@
     "folders":
     [
         {
-            "path": "~/Dropbox/Uni/Dissertation/dissertation",
+            "path": ".",
             "name": "Dissertation",
-            "file_exclude_patterns": [".gitignore", ".*tmp", "*.aux", "*.toc", "*.sublime-*", "*.fls", "*.fdb_latexmk", "*.synctex.gz"]
+            "file_exclude_patterns": [".gitignore", ".*tmp", "*.aux", "*.toc", "*.sublime-*", "*.fls", "*.fdb_latexmk", "*.synctex.gz", "*.nlo", "*.out"]
         }
     ]
 }

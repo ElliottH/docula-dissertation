@@ -12,3 +12,6 @@
 *.sublime-workspace
 
 *.pdf
+
+.DS_Store
+.*tmp
