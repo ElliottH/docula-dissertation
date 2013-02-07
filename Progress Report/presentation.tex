@@ -1,0 +1,153 @@
+\documentclass{beamer}
+\usecolortheme[accent=blue]{solarized}
+\beamertemplatetransparentcovered
+
+\usepackage{lmodern}
+\usepackage[UKenglish]{datetime}
+
+\usepackage{listings}
+\lstset{
+    upquote=true,
+    columns=fixed,
+    tabsize=4,
+    extendedchars=true,
+    breaklines=true,
+%    numbers=left,
+    numbersep=5pt,
+    backgroundcolor=\color{solarizedBase2},
+    rulesepcolor=\color{solarizedBase03},
+    numberstyle=\tiny\color{solarizedBase01},
+    basicstyle=\footnotesize\ttfamily,
+    keywordstyle=\color{solarizedGreen},
+    stringstyle=\color{solarizedCyan}\ttfamily,
+    identifierstyle=\color{solarizedBlue},
+    commentstyle=\color{solarizedBase01},
+    emphstyle=\color{solarizedRed}
+}
+
+\title{A Documentation Generation Engine}
+\subtitle{Progress Report}
+
+\author{Elliott Hillary}
+\date{\today}
+
+\begin{document}
+  \begin{frame}
+    \titlepage
+  \end{frame}
+  \begin{frame}
+    \frametitle{Project Aims}
+      \begin{itemize}
+        \item Documentation is hard to get right, particularly if it isn't
+          written during development.
+          \begin{itemize}
+            \item An effective documentation process needs to be as convenient
+              as possible for the developer.
+          \end{itemize}
+          \item Software already exists to tackle this problem (e.g.~doxygen),
+            but I aimed to approach it differently.
+            \begin{itemize}
+              \item Interface documentation
+                \begin{itemize}
+                  \item \emph{What} it does
+                \end{itemize}
+              \item Implementation documentation
+                  \begin{itemize}
+                    \item \emph{How \& why} it does it
+                  \end{itemize}
+            \end{itemize}
+          \item Modular by design
+          \item Compatibility
+      \end{itemize}
+  \end{frame}
+
+  \begin{frame}[fragile]
+    \frametitle{Sample Docstring}
+    \begin{lstlisting}[language=c, gobble=5, escapechar=~]
+      /**
+       * The realloc() function tries to change the size of
+       * the allocation pointed to by ptr to size, and
+       * returns ptr.
+       * ...
+       * ~{\color{solarizedCyan} @param[in, out]}~ ptr Pointer to the memory.
+       * ~{\color{solarizedCyan} @param[in]}~ size (New) size of memory desired.
+       * ~{\color{solarizedCyan} @return}~ If successful, returns a pointer to
+       *        allocated memory. If there is an error,
+       *        returns a NULL pointer and sets errno to
+       *        ENOMEM.
+       */
+      void *realloc(void *ptr, unsigned int size);
+    \end{lstlisting}
+\end{frame}
+
+  \begin{frame}
+    \frametitle{Parsing is \emph{Hard}}
+    \begin{itemize}
+      \item Initial parser was {\raise.17ex\hbox{$\scriptstyle\sim$}}500 LOC and
+        successfully parsed about 95\% of C
+      \item At this point adding the final few things was time-consuming at
+        best, and seemingly impossible at worst
+        \begin{itemize}
+          \item In the interests of advancing on schedule, this was infeasible
+        \end{itemize}
+      \item ...And so a simplified parser was born
+        \begin{itemize}
+          \item Weighs in at half LOC of its predecessor
+        \end{itemize}
+      \item Simplification has its drawbacks
+        \begin{itemize}
+          \item Function bodies go largely unparsed, making referencing harder
+        \end{itemize}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Current State}
+    \begin{itemize}
+      \item Simplified parser
+        \begin{itemize}
+          \item Knows enough C to pull out what we need and safely navigate the
+            rest
+          \item Stumbles on macros \& similar odd things people do in header
+            files
+        \end{itemize}
+      \item One input language, one output format
+        \begin{itemize}
+          \item C $\rightarrow$ HTML
+        \end{itemize}
+      \item Basic command line utility
+        \begin{itemize}
+          \item Traverses directory hierarchy looking for things it cares about,
+            with a few options
+        \end{itemize}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Next Steps}
+      \begin{itemize}
+        \item Begin dissertation work
+        \item Cross-referencing
+          \begin{itemize}
+            \item Types and functions defined in different compilation units
+              should explicitly refer to one another
+          \end{itemize}
+        \item Parser optimisation \& improvments
+          \begin{itemize}
+            \item Parser currently trips over certain things, and should
+              probably do so more gracefully (and hopefully not at all!)
+          \end{itemize}
+        \item Track references to functions (and variables?)
+          \begin{itemize}
+            \item Maintenance of a large source tree is much easier if you know
+              what's calling what without digging.
+          \end{itemize}
+      \end{itemize}
+  \end{frame}
+\end{document}
+
+% What is project
+% Original goals & plan
+% What I actually did
+% more recently what I've done
+% Where I'm going now and what I've got left to do
