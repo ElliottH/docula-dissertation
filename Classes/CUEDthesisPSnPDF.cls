@@ -42,9 +42,11 @@
 \usepackage{fancyhdr}
 \usepackage{eucal}
 \usepackage[english]{babel}
+\usepackage{csquotes}
 \usepackage[usenames, dvipsnames]{color}
 \usepackage[perpage]{footmisc}
-\usepackage[square, sort, numbers, authoryear]{natbib}
+%\usepackage[square, sort, numbers, authoryear]{natbib}
+\usepackage[style=authoryear,citestyle=numeric,backref=false,hyperref=true]{biblatex}
 \usepackage{ifthen}
 \usepackage{ifpdf}
 
@@ -89,7 +91,7 @@
                  bookmarksnumbered = true,
                  breaklinks = true,
                  linktocpage,
-                 pagebackref,
+%                 pagebackref,
                  colorlinks = true,
                  linkcolor = blue,
                  urlcolor  = blue,
@@ -110,7 +112,7 @@
                  bookmarksnumbered = true,
                  breaklinks = true,
                  linktocpage,
-                 pagebackref,
+%                 pagebackref,
                  colorlinks = true,
                  linkcolor = blue,
                  urlcolor  = blue,
