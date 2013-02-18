@@ -1,4 +1,8 @@
-\documentclass[twoside,10pt,notitlepage]{Classes/CUEDthesisPSnPDF}
+\documentclass[twoside,12pt,notitlepage]{Classes/CUEDthesisPSnPDF}
+
+\defbibheading{bibliography}{\chapter{Bibliography}}
+\bibliography{Dissertation/references}
+
 \usepackage{appendix}
 \usepackage{xcolor}
 \usepackage{listings}
@@ -71,6 +75,8 @@ Girton College \\
 \include{Dissertation/chapter3}
 \include{Dissertation/chapter4}
 \include{Dissertation/chapter5}
+
+\printbibliography
 
 \begin{appendices}
 \include{Dissertation/comment_appendix}
