@@ -1,1 +1,93 @@
+% Principally, this chapter should describe the work which was undertaken before
+% code was written, hardware built or theories worked on. It should show how the
+% project proposal was further refined and clarified, so that the Implementation
+% stage could go smoothly rather than by trial and error.
+
+% Throughout this chapter and indeed the whole dissertation, it is essential to
+% demonstrate that a proper professional approach was employed.
+
+% The nature of this chapter will vary greatly from one dissertation to another
+% but, underlining the professional approach, this chapter will very likely
+% include a section headed “Requirements Analysis” and incorporate other
+% references to the techniques of Software Engineering.
+
+% The chapter will cite any new programming languages and systems which had to
+% be learnt and will mention complicated theories or algorithms which required
+% understanding.
+
 \chapter{Preparation}
+\section{Requirements}
+
+\section{Comment Format}
+In my proposal, I specifically mentioned the compatibility with existing comment
+formats was highly important to produce a useful result; as such, consideration
+about the format I was going to be using had to be undertaken before any work
+could begin. Both doxygen and Javadoc's comment formats are similar to one
+another, and together they have quite a large `market' share, so it was sensible
+to design a format that was compatible with these as much as possible. Ideally,
+my format should be equal to or a superset of their formats, so that any
+comments written with them in mind will work with the software I write.
+
+With that in mind, I designed a format along the following lines (a full version
+of which can be found in the appendix):
+
+\begin{lstlisting}[language=c, escapechar=~]
+  /**
+   * Summary
+   *
+   * Full Description
+   *
+   * ~{\color{solarized@cyan} @param[in, out]}~ ptr Description of parameter ptr
+   * ~{\color{solarized@cyan} @param[in]}~ size Description of parameter size
+   * ~{\color{solarized@cyan} @return}~ Description of return value.
+   */
+  void *realloc(void *ptr, unsigned int size);
+\end{lstlisting}
+
+\begin{itemize}
+  \item The first paragraph (i.e.~up to the first empty line) is considered to
+    be a summary, and gives a brief outline of the intended use. This is
+    standard practice with Javadoc, and can be enabled in doxygen.
+  \item The following paragraphs make up the full description, expanding on the
+    summary, describing in more detail what it does and how it should be used.
+  \item @-annotations
+    \begin{itemize}
+      \item \lstinline|@param| annotations are used to describe the individual
+        parameters and their purpose.
+      \item The square-bracket suffixes to \lstinline|@param| annotations are
+        for describing the flow of data, that is whether the variable is only
+        used for input, output or both. These are described as \lstinline|[in]|,
+        \lstinline|[out]| \& \lstinline|[in,out]| respectively. If a parameter
+        is absent a flow annotation, it will be assumed that it is
+        \lstinline|[in]|.
+        doxygen already uses this way of describing flows; Javadoc does not have
+        any such feature, this is presumably because Java only does
+        pass-by-value and so this was deemed unnecessary.
+      \item \lstinline|@return| is used to describe what will be returned by the
+        function; this may include under what conditions it will return an error
+        and what those error values may be.
+    \end{itemize}
+    \item Summary \& Description sections can be applied to things other than
+      functions, the @-annotations cannot, as they would be meaningless.
+\end{itemize}
+
+\section{Tools}
+  \subsection{Programming Language}
+    I opted to use Ruby to implement this project, whilst I do not have as much
+    experience with Ruby as some other languages (like Java), I felt it was best
+    suited to the project. This is because one of Ruby's strengths is in its
+    powerful text-manipulation capabilities, whereas processing Strings in Java
+    can be quite heavyweight in terms of memory.
+
+    Additionally, having looked into implementing parsers in various languages,
+    I found that Treetop\cite{website:treetop} was particularly to my liking.
+    Treetop is a domain-specific language for Ruby, that facilitates the
+    creation of parsing expression grammars; one of the particularly useful
+    things about Treetop is that it allows you to define specific types for
+    matched rules to instantiate, so that a lot of the effort of having to walk
+    a parse tree can be alleviated. This will be discussed in further detail in
+    the Implementation chapter.
+
+    I was already partially familiar with Ruby, however I made use of
+    \emph{Eloquent Ruby}\cite{book:eloquent_ruby} to further hone my knowledge
+    of the language.
