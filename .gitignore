@@ -12,6 +12,16 @@
 *.sublime-workspace
 
 *.pdf
+*.doc*
 
 .DS_Store
 .*tmp
+
+*-blx.bib
+*.bbl
+*.blg
+*.run.xml
+
+*.nav
+*.snm
+*.vrb
