@@ -1,1 +1,42 @@
+% The Introduction should explain the principal motivation for the project.
+% Show how the work fits into the broad area of surrounding Computer Science and
+% give a brief survey of previous related work. It should generally be
+% unnecessary to quote at length from technical papers or textbooks. If a simple
+% bibliographic reference is insufficient, consign any lengthy quotation to an
+% appendix.
+
 \chapter{Introduction}
+
+\emph{\textbf{TODO:} Outline how well the project went.}
+
+Whilst working on several large projects, I noticed that the difference between
+good documentation and bad documentation (or lack thereof) can make a huge
+difference to further development or maintenance of the code base; so much so,
+that documentation can save hours' worth of tedious work just finding the areas
+of the source code that require work, without even considering the benefits -
+in both time and effort saved - it also brings by better informing a developer
+or maintainer about the inner workings of the code itself. Documentation, even
+in its simplest form, helps to alleviate this; something as basic as just adding
+comments to the code to explain what sections do assists future developers in
+getting to grips with your code.
+
+Documentation generation goes further than this: it outlines a way in which
+users should structure their comments to produce documentation, and by doing so
+they can reap the benefits of documentation that is formatted for easy
+consumption - e.g.~as a HTML document - and is collected together and properly
+cross-referenced. This allows a user to easily jump between related sections of
+the documentation, and therefore in turn jump through the code, such as a
+function definition that refers to a user-defined type providing a link to the
+documentation of that type.
+
+Software that performs these tasks already exists, and goes a long way to making
+the lives of developers easier, such as doxygen\cite{website:doxygen} and
+Javadoc\cite{website:javadoc}. These pieces of software, and their alternatives,
+are widely used, but they offer an incomplete solution to the problems they
+address. Most documentation generation focuses on helping developers establish
+\emph{what} a particular thing dopes, or is used for, but they ignore \emph{why}
+it is implemented in that particular way and what considerations were made to
+design it in that way.
+
+The intention of my project was to implement a documentation generation engine,
+with the plan of taking it further to tackle this problem.
