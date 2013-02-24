@@ -16,9 +16,74 @@
 % understanding.
 
 \chapter{Preparation}
-\section{Requirements}
+\section{Requirements Analysis}
+This project consists of two main parts:
+\begin{itemize}
+  \item One or more parsers, to transform the code base into an appropriate data
+    structure. This data structure can then be manipulated and used to extract
+    the information needed from the code.
+  \item Code to transform the intermediate data into a human-readable format.
+\end{itemize}
+
+In addition to these two components there should also be a means to store the
+intermediate data; while this is not strictly required, it does allow for us to
+improve the runtime of the process. This can be done by determining whether a
+file has changed since it was last parsed, if it has not there is no need to
+reinterpret the file, we can simply use the data that is already stored about
+it.
+
+This will be done by storing the hash of the file when it is parsed, allowing
+the program to just run over the hashes in the event that nothing has changed.
+This is particularly useful, as it will allow for quick incremental generation
+of the documentation, so developers using the program will find it much more
+convenient to quickly use to check that their documentation is in order.
+
+For the purposes of this project, I will only be implementing a parser for one
+programming language, I have chosen to implement it for C since there are many
+large, open-source \& well documented code bases written in C available online;
+this will make my testing both more thorough and realistic. I believe that
+implementing more than one parser would be a poor use of time \& resources and
+is beyond the scope of this project.
+
+Likewise, I will be implementing one concrete output format for the program,
+namely HTML. I have chosen to use HTML as I am already familiar with it, whereas
+implementing a \LaTeX\ or PDF output would involve much more work - particularly
+to implement cross referencing, which should be trivial in HTML - for a similar
+result.
+
+This does not, however, mean that I will be designing this software without
+other input \& output formats in mind; the software should be developed with a
+view to be expanded in the future, and therefore should be coded to be as
+modular as possible.
+
+\section{Action Plan}
+I then created an action plan with these main aims in mind in order to ensure
+the project's success; I will be be adopting the waterfall model to develop this
+project, and so the plan follows that general structure.
+\begin{enumerate}
+  \item Research - look at existing documentation software, and identify their
+    flaws \& attributes.
+  \item Identify the features required in this parser, taking into account the
+    strengths \& weaknesses identified in the previous phase to determine the
+    functionality to be included or improved upon.
+  \item Develop an outline for the project so that an awareness of structure and
+    flow can form. Plan what order the code shall be written in and what order -
+    what tests need to be performed along the way to ensure functionality.
+  \item Choose the programming language best suited to the project - learn
+    and/or practise the language to ensure fluency and suitability for the
+    project.
+  \item List and develop tests that will take place during the coding and at the
+    end to ensure the project functions correctly.
+  \item Begin writing and testing code - revisit plan if necessary to make
+    alterations.
+  \item Complete end testing and make any necessary alterations
+\end{enumerate}
 
 \section{Comment Format}
+I have previously used both Javadoc \& doxygen and have reviewed them again
+prior to beginning this project. I have therefore kept their functionality and
+limitations in mind while designing the comment format.
+
 In my proposal, I specifically mentioned the compatibility with existing comment
 formats was highly important to produce a useful result; as such, consideration
 about the format I was going to be using had to be undertaken before any work
@@ -91,3 +156,55 @@ of which can be found in the appendix):
     I was already partially familiar with Ruby, however I made use of
     \emph{Eloquent Ruby}\cite{book:eloquent_ruby} to further hone my knowledge
     of the language.
+  \subsection{Version Control}
+    Given that I have more previous experience with git than with any other
+    version control system, I have decided to use it to manage my project. It
+    provides additional advantages over some other version control systems,
+    particularly in the fact that it is distributed; which means that the entire
+    development history of the project will be available to me, no matter what
+    machine I am working on.
+
+    Using git will also allow me to make use of both GitHub and the PWF as a
+    means of backup by pushing my changes to them regularly. As an additional
+    form of backup my main development machine is backed up using OS X's Time
+    Machine.
+
+\section{Testing}
+The testing of the project will be split in to two parts; part of it,
+particularly in the development of the parser, will be performed during
+development and the rest will be performed after the completion of the main
+body of the code has been written.
+
+  \subsection{Regression Testing}
+    In order to implement the parser successfully, I will be making use of
+    regression testing; this will be used to ensure that the parser behaves
+    in an expected manner for specific inputs, and make sure that when new
+    functionality is added it does not fail any of the previous tests.
+
+    To do this I will be writing short snippets of code that implement a
+    specific part of the language's feature set, and then making sure that these
+    tests pass before continuing, such as:
+
+    \begin{lstlisting}[language=c, gobble=4]
+      int c;
+    \end{lstlisting}
+
+    This makes sure that I identify bugs early, and prevents me from introducing
+    any new ones later in development, allowing me to fix them before they cause
+    any serious problems.
+
+  \subsection{End Testing}
+    Evaluating documentation is inherently a subjective process, and so it would
+    not be feasible to evaluate by any formal means; as such, I will be creating
+    a questionnaire which will be given to several members of staff at
+    Dr.~Watts' company, along with the software itself, for them to evaluate
+    compared to their usual documentation solutions. This questionnaire, and any
+    familiarisation with the software required, should take no longer than half
+    an hour; to take any longer is unnecessary, as it is initial opinions which
+    will ultimately decide someone's choice of whether or not to use the
+    software, and so I would like to attempt to capture that within the survey.
+
+    In order for the surveys to be completed the documentation software will
+    have to be used on a sample of code from the workplace ensuring that it
+    functions across a wide spectrum of styles and is therefore suitable for use
+    in the working environment.
