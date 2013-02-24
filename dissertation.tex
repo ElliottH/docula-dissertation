@@ -6,6 +6,7 @@
 \usepackage{appendix}
 \usepackage{xcolor}
 \usepackage{listings}
+\usepackage{textcomp}
 
 \raggedbottom                           % try to avoid widows and orphans
 \sloppy
@@ -51,6 +52,11 @@
 \definecolor{solarized@blue}{HTML}{268BD2}
 \definecolor{solarized@cyan}{HTML}{2AA198}
 \definecolor{solarized@green}{HTML}{859900}
+
+\lstdefinelanguage{treetop}[]{ruby}{
+  morekeywords={rule},
+  morecomment=[s]{<}{>}
+}
 
 \lstset{
     upquote=true,
