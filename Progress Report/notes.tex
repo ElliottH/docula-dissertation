@@ -1,0 +1,146 @@
+\documentclass[handout]{beamer}
+
+\usepackage{pgf}
+\usepackage{pgfpages}
+\usepackage{lmodern}
+
+\pgfpagesuselayout{8 on 1}[a4paper,border shrink=5mm]
+
+\begin{document}
+  \begin{frame}
+    \frametitle{Project Aims}
+      \begin{itemize}
+        \item Documentation is hard to get right, particularly if it isn't
+          written during development
+          \begin{itemize}
+            \item An effective documentation process needs to be as convenient
+              as possible for the developer
+            \item \textbf{The easier it is for the developer to do right there
+              \& then, the better the result}
+          \end{itemize}
+          \item Software already exists to tackle this problem (e.g.~doxygen),
+            but I aimed to approach it differently
+            \begin{itemize}
+              \item Interface documentation
+                \begin{itemize}
+                  \item \emph{What} it does
+                  \item \textbf{Header file}
+                \end{itemize}
+              \item Implementation documentation
+                  \begin{itemize}
+                    \item \emph{How \& why} it does it
+                    \item \textbf{Source file}
+                    \item \textbf{This is normally neglected, making maintenance
+                     harder}
+                  \end{itemize}
+            \end{itemize}
+          \item Modular by design
+          \item Compatibility
+            \begin{itemize}
+              \item \textbf{Important
+                \begin{itemize}
+                  \item Allows people to actually convert to it easily
+                  \item Doesn't affect the way people are used to writing docs
+                \end{itemize}}
+            \end{itemize}
+      \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Sample Docstring}
+    \textbf{
+    \begin{itemize}
+      \item Almost identical to doxygen \& JavaDoc
+      \item Describe comment format
+        \begin{itemize}
+          \item Other comment formats
+        \end{itemize}
+      \item Talk about @param, @return
+        \begin{itemize}
+          \item Flows
+          \item Extendible to @error, \&c
+        \end{itemize}
+    \end{itemize}
+    }
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Parsing is \emph{Hard}}
+    \begin{itemize}
+      \item Initial parser was {\raise.17ex\hbox{$\scriptstyle\sim$}}500 LOC and
+        successfully parsed about 95\% of C
+      \item At this point adding the final few things was time-consuming at
+        best, and seemingly impossible at worst
+        \begin{itemize}
+          \item In the interests of advancing on schedule, this was infeasible
+          \item \textbf{Regression testing allows me to spot problems early}
+        \end{itemize}
+      \item ...And so a simplified parser was born
+        \begin{itemize}
+          \item Weighs in at half LOC of its predecessor
+          \item \textbf{Talk about brace-matching, \&c}
+        \end{itemize}
+      \item Simplification has its drawbacks
+        \begin{itemize}
+          \item Function bodies go largely unparsed, making referencing harder
+        \end{itemize}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Current State}
+    \begin{itemize}
+      \item Simplified parser
+        \begin{itemize}
+          \item Knows enough C to pull out what we need and safely navigate the
+            rest
+          \item Stumbles on macros \& similar odd things people do in header
+            files
+            \begin{itemize}
+              \item \textbf{Involves parser tracking macro definitions \&
+                knowing to ignore them}
+            \end{itemize}
+        \end{itemize}
+      \item One input language, one output format
+        \begin{itemize}
+          \item C $\rightarrow$ HTML
+        \end{itemize}
+      \item Basic command line utility
+        \begin{itemize}
+          \item Traverses directory hierarchy looking for things it cares about,
+            with a few options
+        \end{itemize}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Next Steps}
+      \begin{itemize}
+        \item Begin dissertation work
+          \begin{itemize}
+            \item \textbf{Wrist}
+          \end{itemize}
+        \item Cross-referencing
+          \begin{itemize}
+            \item Types and functions defined in different compilation units
+              should explicitly refer to one another
+            \item \textbf{This is where the interface vs.~implementation magic
+              happens}
+          \end{itemize}
+        \item Parser optimisation \& improvements
+          \begin{itemize}
+            \item Parser currently trips over certain things, and should
+              probably do so more gracefully (and hopefully not at all!)
+            \item \textbf{Speed is already good}
+          \end{itemize}
+        \item Track references to functions (and variables?)
+          \begin{itemize}
+            \item Maintenance of a large source tree is much easier if you know
+              what's calling what without digging
+              \begin{itemize}
+                \item \textbf{Ease-of-use, \&c}
+              \end{itemize}
+          \end{itemize}
+      \end{itemize}
+  \end{frame}
+\end{document}
