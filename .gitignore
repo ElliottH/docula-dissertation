@@ -20,6 +20,7 @@
 *-blx.bib
 *.bbl
 *.blg
+*.bcf
 *.run.xml
 
 *.nav
