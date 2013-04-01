@@ -9,34 +9,40 @@
 
 \emph{\textbf{TODO:} Outline how well the project went.}
 
-Whilst working on several large projects, I noticed that the difference between
-good documentation and bad documentation (or lack thereof) can make a huge
-difference to further development or maintenance of the code base; so much so,
-that documentation can save hours' worth of tedious work just finding the areas
-of the source code that require work, without even considering the benefits -
-in both time and effort saved - it also brings by better informing a developer
-or maintainer about the inner workings of the code itself. Documentation, even
-in its simplest form, helps to alleviate this; something as basic as just adding
-comments to the code to explain what sections do assists future developers in
-getting to grips with your code.
+Whilst working on several large projects, I have noticed the difference good
+documentation can make to the further development or maintenance of a code base.
+Documentation can save hours of tedious work finding the areas of the source
+code that require work, without even considering the benefits it also brings by
+better informing the developer about the inner workings of the code itself. Good
+documentation informs the reader of what a particular section of code does and,
+depending on the situation, what design decisions were made and how the code
+itself works. When written properly, documentation should inform the reader in
+enough detail that they can begin using the code without having to dig into the
+internals of it.
 
-Documentation generation goes further than this: it outlines a way in which
-users should structure their comments to produce documentation, and by doing so
-they can reap the benefits of documentation that is formatted for easy
-consumption - e.g.~as a HTML document - and is collected together and properly
-cross-referenced. This allows a user to easily jump between related sections of
-the documentation, and therefore in turn jump through the code, such as a
-function definition that refers to a user-defined type providing a link to the
-documentation of that type.
+The problem with writing good documentation is that it requires developer time
+\& skill to maintain, unfortunately most developers have neither. Documentation
+generation helps to solve this problem, by minimising the amount of work a
+developer has to do to produce documentation, meaning that they are more likely
+to create useful documentation. First and foremost, documentation generation
+allows for developers to write their documentation in the source files
+themselves, where it is later extracted by the generation software; this means
+that the documentation is much more convenient to write, since it can be written
+alongside the code. The additional benefit from this is that the generation
+software can extract the information about the section being documented, such as
+its type, and include this information in the documentation itself; this makes
+reduces the amount of work the developer has to do, whilst also making it harder
+for the documentation to become inconsistent with the code as it is derived from
+it.
 
-Software that performs these tasks already exists, and goes a long way to making
-the lives of developers easier, such as doxygen\cite{website:doxygen} and
-Javadoc\cite{website:javadoc}. These pieces of software, and their alternatives,
-are widely used, but they offer an incomplete solution to the problems they
-address. Most documentation generation focuses on helping developers establish
-\emph{what} a particular thing does, or is used for, but they ignore \emph{why}
-it is implemented in that particular way and what considerations were made to
-design it in that way.
+Software, such as doxygen\cite{website:doxygen} and
+Javadoc\cite{website:javadoc}, already exists to perform these tasks and already
+goes a long way to making the lives of developers easier. These pieces of
+software, and their alternatives, are widely used, but they offer an incomplete
+solution to the problems they address. Most documentation generation focuses on
+helping developers establish \emph{what} a particular thing does, or is used
+for, but they ignore \emph{why} it is implemented in that particular way and
+what considerations were made to design it in that way.
 
 The intention of my project was to implement a documentation generation engine,
 with the plan of taking it further to tackle this problem.
