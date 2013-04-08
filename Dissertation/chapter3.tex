@@ -1,1 +1,227 @@
+% This chapter should describe what was actually produced: the programs which
+% were written, the hardware which was built or the theory which was developed.
+% Any design strategies that looked ahead to the testing stage might profitably
+% be referred to (the professional approach again).
+
+% Descriptions of programs may include fragments of high-level code but large
+% chunks of code are usually best left to appendices or omitted altogether.
+% Analogous advice applies to circuit diagrams.
+
+% Draw attention to the parts of the work which are not your own. Making
+% effective use of powerful tools and pre-existing code is often laudable, and
+% will count to your credit if properly reported.
+
+% It should not be necessary to give a day-by-day account of the progress of the
+% work but major milestones may sometimes be highlighted with advantage.
+
 \chapter{Implementation}
+
+\section{The Parser}
+To implement my parser, I made use of an existing domain-specific language
+available as a Ruby library called Treetop\cite{website:treetop}; Treetop allows
+for easy implementation of Parsing Expression Grammars, which, simply put, are
+grammars that built up out of a combination of rules and regular expressions.
+
+Parsing Expression Grammars were particularly appealing to me for two reasons:
+firstly, they are essentially a more powerful version of regular expressions,
+with which I am already familiar and secondly, they can be made to run in
+constant time if implemented as a packrat parser, which Treetop does. This
+constant time guarantee is provided by the process of memoization, which trades
+off time for space by caching previous inputs and the resulting parse trees to
+remove the need for repeated computations.
+
+Treetop grammars are written as their own .treetop files, which are then used
+to generate the parsers by the \lstinline|tt| program. The end result is a Ruby
+source file which can be included and used to parse the language defined by the
+grammar. Treetop also allows you to define a class that nodes within the parsed
+data should be instantiated as, this means that nodes can be given methods with
+which they can parse themselves or their children; which is much preferable to
+the traditional methods of writing code to walk the tree structures.
+
+\begin{code}[language=treetop]
+  rule comment
+    '//' ( !EOL .)* EOL <CommentNode>
+    / '# ' ( !EOL .)* EOL <CommentNode>
+    / (multiline_comment) <CommentNode>
+  end
+  rule multiline_comment
+    '/*'
+    (
+      !'*/'
+      (. / EOL)
+    )*
+    '*/'
+  end
+  rule EOL
+    [\n]
+  end
+\end{code}
+
+Above is a snippet from my Treetop grammar for C, defining the grammar for
+comments. The rule \lstinline|comment| contains an ordered choice of expressions
+that define each type of comment available in C, and informs Treetop that they
+should be instantiated using the class \lstinline|CommentNode|;
+\lstinline|CommentNode| defines a method with which the text of the comment
+can be extracted.
+
+
+  \subsection{Regression Testing}
+    To ensure that I was properly implementing my grammar for C, I wrote some
+    tests for my parser that would check that parsing a particular piece of code
+    would yield a valid result. This was the quickest \& easiest way of building
+    up a working grammar for the language and allowed me to be confident that
+    what I had written would function correctly as I moved forward.
+
+    This was implemented using \lstinline|TestCase|, a class that is part of the
+    Ruby standard library, and simply involves defining methods that execute the
+    code required for each test and uses various types of assertions to ensure
+    that the results are as expected.
+
+    The process went as follows:
+
+    \begin{center}
+    \begin{tikzpicture}[node distance = 2cm, auto]
+        % Place nodes
+        \node [block] (init) {write tests for new syntax};
+        \node [block, below=of init] (run) {run the tests};
+        \node [decision, below=of run] (fail) {does it fail?};
+        \node [block, left=of fail] (debug) {another rule in the grammar is
+          parsing incorrectly};
+        \node [block, below=of fail, node distance=3cm] (develop) {add new rules
+          to the grammar};
+        \node [block, below=of develop, node distance=3cm] (rerun) {re-run the
+          test};
+        \node [decision, right=of rerun] (refail) {does it fail?};
+        % Draw edges
+        \path [line] (init) -- (run);
+        \path [line] (run) -- (fail);
+        \path [line] (fail) -- node[decision answer] {no} (debug);
+        \path [line] (fail) -- node[decision answer] {yes} (develop);
+        \path [line] (develop) -- (rerun);
+        \path [line] (rerun) -- (refail);
+        \path [line] (refail.east) |- node[decision answer] {no} (init);
+        \path [line] (refail) |- node[decision answer] {yes} (develop);
+    \end{tikzpicture}
+    \end{center}
+
+  \subsection{Parsing Problems}
+    As I wrote my initial grammar for the C parser, it became apparent that I
+    was having some problems; I got to the point where implementing new rules
+    within the grammar would cause other tests to fail, the problem was that
+    describing C correctly required such a huge grammar that the rules were
+    interacting in ways I had not accounted for. This meant that progress on the
+    grammar slowed to a crawl, and it became apparent that the grammar would
+    need to be largely rethought to fully parse C.
+
+    I realised, however, that in order to parse C for the purposes of generating
+    documentation, I did not need my parser to completely understand the
+    language, instead it needed to only understand enough to parse to top level.
+    I therefore wrote a new, simpler parser that understood how to navigate
+    through the C files, rather than parsing all of it; this brought an added
+    advantage of improving the runtime of the parser.
+
+    Instead of parsing function bodies, the simplified parser contains rules to
+    match pairs of braces within functions, ignoring those in strings and
+    comments, to understand where functions begin \& end. With global variable
+    assignments, the parser has rules to match from an equals sign to the
+    semicolon at the end of the line. These simplifications allowed for me to
+    dispense with the expensive and complicated parsing of control structures
+    and arithmetic, and reduced the grammar from ${\sim}$500 lines in the
+    original (unfinished) grammar to ${\sim}$300 lines for the completed
+    simplified one.
+
+    Ideally, some or all of the more complex behaviour would be restored to the
+    grammar, as it would allow for better analysis of the parsed language, such
+    as including in the documentation what was referenced by a particular
+    function. Given the time constraints involved in the project, this could not
+    be performed.
+
+\section{Handling the Data}
+After the source files have been parsed into a parse tree, the useful data can
+be extracted; using the methods that were added into the parse tree by Treetop,
+the code runs through the functions, variables \& other pieces of data and pulls
+out the needed information to be stored in the database.
+
+To store the data I opted to use SQLite, as it requires no configuration to use
+and stores all data in a file, rather than on a SQL server; this means that no
+setup of databases is required on the part of the user. I used the
+sqlite3\cite{website:sqlite} Ruby library to interact with my database, which
+allows you to interact with data from the database using the normal Ruby types.
+
+  \subsection{Processing}
+    The classes I defined for use in the parse tree provide easy access to the
+    data within the nodes, and their subtrees, whilst masking the specifics of
+    the tree itself; this means that future additions to the parser and the way
+    in which it works will not affect the processing of the data. In addition,
+    this allows for the reuse of the processing code on the parse trees of
+    different languages, provided that the nodes in that tree expose the same
+    methods.
+
+    Since some functions in the source being parsed may only be partially
+    documented, I needed to account for this in my code to ensure that the
+    resulting data was consistent; in particular, if a function is documented
+    the hash containing information about the prototype will contain extra
+    information. Uniting the arguments with their documentation proved
+    interesting, and I had to write the code for managing it several times
+    before I created a solution that provided an appropriate output regardless
+    of input.
+
+    \begin{code}[language=ruby, gobble=6]
+      if function.documented?
+        prototype[:arguments] = prototype[:arguments].zip(prototype[:params]).map do |a,d|
+          d ? a.merge(d) : a
+        end
+        prototype.delete(:params)
+      end
+    \end{code}
+
+    This small section of code was the eventual solution, and in just a few
+    lines accomplishes quite a bit. The array containing the arguments
+    parsed, from the function prototype itself, is merged with the array
+    containing the documentation for each argument, producing a new array. This
+    array is contains several arrays, each holding the documentation and
+    prototype for one argument; finally, the map function returns the array I
+    need by merging the two hashes together, if the argument is documented, or
+    returning the just the argument's hash if no documentation exists. The
+    example data below demonstrates the process.
+
+    \begin{code}[language=ruby, gobble=6]
+      A = [{a => 1}, {b => 2}, {c => 3}]
+      B = [{d => 4}, {}, {f => 6}]
+
+      # After zipping A & B...
+
+      C = [[{a => 1}, {d => 4}], [{b => 2}], [{c => 3}, {f => 6}]]
+
+      # After mapping C...
+
+      D = [{a => 1, d => 4}, {b => 2}, {c => 3, f => 6}]
+    \end{code}
+
+      \subsubsection{Post-processing}
+        Once the data for all files in the directory has been added to the
+        database, some extra processing takes place to resolve which files
+        include one another. By looping through all the includes encountered
+        and determining whether it refers another file that has been processed,
+        links are built between files, which are later used by the output stage
+        to allow a user to jump from one file to one of its includes easily.
+
+        To determine if one file refers to another, I decided to check whether a
+        following the path described in the include exists, relative to that
+        file. This is by no means a fool-proof solution, as it does not take
+        into account the include paths passed to a compiler, but the only other
+        sensible solution to this problem would be to also parse the Makefile
+        (or similar file in another build system) to extract the include paths
+        used. Given the number of different build systems used and the time
+        taken to implement another grammar for parsing any of them, I concluded
+        that this was not a valid solution in the time available.
+
+  \subsection{Storage}
+
+    \subsubsection{Foreign Keys}
+
+\section{Generating the Output}
+
+\section{The Command-Line Interface}
+
+  \subsection{Option Parsing}

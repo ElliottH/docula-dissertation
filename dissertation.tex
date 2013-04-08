@@ -8,6 +8,21 @@
 \usepackage{listings}
 \usepackage{textcomp}
 
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, %fill=blue!20,
+    text width=4.5em, text badly centered, node distance=0.5cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, %fill=blue!20,
+    text width=5em, text centered, rounded corners, minimum height=4em, node
+    distance = 0.5cm]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse, %fill=red!20,
+    node distance=3cm, minimum height=2em]
+\tikzstyle{decision answer}=[near start,color=black]
+
+
 \raggedbottom                           % try to avoid widows and orphans
 \sloppy
 \clubpenalty1000%
@@ -76,6 +91,14 @@
     commentstyle=\color{solarized@base01},
     emphstyle=\color{solarized@red}
 }
+
+\lstnewenvironment{code}[1][]%
+{
+   \noindent
+   \minipage{\linewidth}
+   \vspace{0.5\baselineskip}
+   \lstset{basicstyle=\ttfamily\footnotesize,#1}}
+{\endminipage\vspace{0.5\baselineskip}}
 
 \begin{document}
 
