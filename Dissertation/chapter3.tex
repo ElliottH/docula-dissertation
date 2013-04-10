@@ -218,9 +218,81 @@ allows you to interact with data from the database using the normal Ruby types.
 
   \subsection{Storage}
 
+
     \subsubsection{Foreign Keys}
 
 \section{Generating the Output}
+
+Once all the data has been processed and stored, the output can be generated;
+currently there is only one available output format, HTML, however the
+outputting process has been designed so that a new output format can be easily
+added. To do this, a generic \lstinline|Output| class was created that defines
+methods that can be used to extract all the data required for producing the
+output. This means that creation of a new output format only requires the
+definition of a new subclass of \lstinline|Output| that defines an
+\lstinline|output| method, which can call the other methods already defined to
+get its data.
+
+Generating output can be a messy process, especially with HTML, as inevitably
+code and HTML markup end up being interleaved together; I have done my best to
+separate the two out by defining functions that produce particular sections of
+commonly repeated HTML, such as creating links and table rows, to increase the
+readability of the code, however there is only so much this can be done.
+
+\begin{code}[language=ruby, gobble=2]
+  def row_with_id(id, *entries)
+    if entries == []
+      "<tr id=\"#{id}\"></tr>"
+    else
+      "<tr id=\"#{id}\"><td>#{entries.join("</td><td>")}</td></tr>\n"
+    end
+  end
+\end{code}
+
+The function above allows me to create a new row in a table
+\lstinline|row_with_id("some_id", ["item1", "item2"])| when I need one, rather
+than repeating the same HTML over \& over. String interpolation also helps the
+situation greatly, as it allowed me to write much more concise code; the above
+code without it would have been much more verbose and complicated, line 5 would
+have been:
+
+\begin{code}[language=ruby, gobble=2]
+  "<tr id=\"" << id.to_s << "\"><td>" << entries.join("</td><td>") << "</td></tr>\n"
+\end{code}
+
+This would have also been more expensive to compute, as it requires mutating the
+string four times, rather than just creating it correctly in the first place.
+This is one example of a reason I chose Ruby in the in my proposal.
+
+  \subsection{Linking Between Files}
+    Linking between the outputted pages, for things like the list of includes,
+    was solved using \lstinline|Pathname|, another class available in the Ruby
+    standard library. \lstinline|Pathname| allows you to determine the relative
+    path between two files; since I had ensured that the directory structure of
+    my outputted data matched that of the input data, the relative path between
+    the two source files is also the relative path between the HTML files. This
+    meant that producing these paths was fairly easy.
+
+    Taking this a step further, I also implemented linking a type to the file it
+    was originally declared in; this was done with \lstinline|Pathname| as
+    above, and a \lstinline|type| method in \lstinline|Output| that looks up
+    types in the SQLite database.
+
+    \begin{code}[language=sql, gobble=6]
+      SELECT types.*, files.path FROM
+       (SELECT id, file_id, name, 'typedef' FROM typedefs WHERE typedefs.name = ?
+        UNION ALL
+        SELECT id, file_id, name, 'define' FROM defines WHERE defines.name = ?
+       ) AS 'types' INNER JOIN files ON types.file_id = files.id
+    \end{code}
+
+    This SQL statement looks up a type in the \lstinline|typedef| \&
+    \lstinline|define| tables, unioning the two result sets together to ensure
+    that we get results from either, and then performs an inner join of these
+    results against the files table to get the information on the file that the
+    typedef or define was found in. This results in a rather large SQL
+    statement, which can be a little complicated to understand, however it is
+    much quicker than running three queries and producing the result in Ruby.
 
 \section{The Command-Line Interface}
 
