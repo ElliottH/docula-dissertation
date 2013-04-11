@@ -295,5 +295,116 @@ This is one example of a reason I chose Ruby in the in my proposal.
     much quicker than running three queries and producing the result in Ruby.
 
 \section{The Command-Line Interface}
+The command line interface ties all of the previous stages together, allowing
+for everything to be used together conveniently without requiring any Ruby
+knowledge on the part of the user.
+
+Aside from making the process more convenient, the command line interface also
+provides easy manipulation of the options the program uses and performs the
+cleaning and the initial setup of the database.
+
+Within this same section of code is also where the traversal of directories to
+find the files to be parsed takes place; Ruby's use of blocks allows the code
+for this to be written quickly and clearly. I wrote a small method,
+\lstinline|recurse|, that recurses down through the directories contained within
+a particular path, and yields the files contained in them back to its caller.
+This way of doing this made working through the files as convenient as working
+through the elements of an array, without having to store all of the filenames
+in an array first.
+
+% \begin{lstlisting}[language=ruby, gobble=2]
+%   # Compare:
+
+%   ["test.h", "test.c", "another_file.txt"].each do |element|
+%     if parsers[File.extname(element)]
+%       # ...
+%     end
+%   end
+
+%   # versus
+
+%   Dir.recurse(options[:directory]) do |file|
+%     if parsers[File.extname(file)]
+%       # ...
+%     end
+%   end
+% \end{lstlisting}
+
+The process goes as follows:
+
+\begin{center}
+    \begin{tikzpicture}[node distance = 0.5cm, auto]
+        % Place nodes
+        \node [block] (exist) {mark all database entries as exist=0};
+        \node [block, left=of exist] (check) {check extension};
+        \node [decision, below=of check] (extension) {correct?};
+        \node [decision, left=of extension] (next) {next file};
+        \node [block, below=of extension] (md5) {generate MD5 of file};
+        \node [decision, below=of md5] (match) {hash match?};
+        \node [block, below=of next] (mark) {mark file as exist=1};
+        \node [block, below=of match] (parse) {parse the file};
+        \node [decision, below=of parse] (success) {success?};
+        \node [block, below=of success] (process) {process the parse tree};
+        \node [block, left=of next] (delete) {delete database entries where
+          exist=0};
+        % Draw edges
+        \path [line] (exist) -- (check);
+        \path [line] (check) -- (extension);
+        \path [line] (extension) -- node[decision answer] {yes} (md5);
+        \path [line] (extension) -- node[decision answer] {no} (next);
+        \path [line] (md5) -- (match);
+        \path [line] (match) -| node[decision answer] {yes} (mark);
+        \path [line] (match) -- node[decision answer] {no} (parse);
+        \path [line] (parse) -- (success);
+        \path [line] (success) -| node[decision answer] {no} (mark);
+        \path [line] (success) -- node[decision answer] {yes} (process);
+        \path [line] (mark) -- (next);
+        \path [line] (process) -| (mark);
+        \path [line] (next) |- node[decision answer] {yes} (check);
+        \path [line] (next) -- node[decision answer] {no} (delete);
+    \end{tikzpicture}
+    \end{center}
 
   \subsection{Option Parsing}
+    Ruby has an extremely robust command-line option parser built into the
+    standard library, so there was no need to roll my own or make use of an
+    external library. \lstinline|OptionParser| made defining options simple, and
+    produces help text automatically, so the whole process was quite straight
+    forward.
+
+    The following snippet is sufficient to describe a verbose option for a
+    program:
+
+    \begin{lstlisting}[language=ruby,gobble=6]
+      options = {}
+      OptionParser.new do |opts|
+        opts.banner = "Usage: example.rb [options]"
+
+        opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+          options[:verbose] = v
+        end
+      end.parse!
+    \end{lstlisting}
+
+    Using \lstinline|OptionParser| allowed me to specify default options within
+    my \lstinline|options| hash, which can then be overridden by the user on the
+    command-line.
+
+    \lstinline|OptionParser| also allows you to define an option that takes only
+    certain inputs, using this it was easy to create and option for choosing the
+    output format; even though there is only one currently, this project was
+    designed with extensibility in mind.
+
+    \begin{code}[language=ruby, gobble=6]
+      o.on("--format FORMAT", outputs, "Select output format",
+           "  (#{outputs.keys.join(", ")})") do |format|
+        options[:format] = format
+      end
+    \end{code}
+
+    This adds an option that will accept any entry that is a key in the
+    \lstinline|outputs| hash, and sets the appropriate entry in the
+    \lstinline|options| hash to the value of the entry, which is the output
+    class to use. This means that adding a new output format requires only a
+    subclass of \lstinline|Output| and an entry referencing it in the
+    \lstinline|outputs| hash.
