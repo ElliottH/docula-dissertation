@@ -8,7 +8,7 @@
 
 % The nature of this chapter will vary greatly from one dissertation to another
 % but, underlining the professional approach, this chapter will very likely
-% include a section headed “Requirements Analysis” and incorporate other
+% include a section headed "Requirements Analysis" and incorporate other
 % references to the techniques of Software Engineering.
 
 % The chapter will cite any new programming languages and systems which had to
@@ -16,79 +16,106 @@
 % understanding.
 
 \chapter{Preparation}
+Before I can begin to write any code for this project, I first need to decide on
+the components that will make up the core of it and ensure that any work that
+needs to be done before code writing commences is completed. First step in this
+is to define an overall structure to the project.
+
+\begin{center}
+  \vspace*{5mm}
+  \begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [block_spaced] (input) {input};
+    \node [block_spaced, right=of input] (processing) {data processing};
+    \node [block_spaced, above=of processing] (storage) {data storage};
+    \node [block_spaced, right=of processing] (output) {output formatting};
+    \node [block_spaced, below=of processing] (command) {command line};
+    % Draw edges
+    %\path [line] (input) -- (processing);
+    %\path [line] (processing.100) -- (storage.260);
+    %\path [line] (storage.280) -- (processing.80);
+    %\path [line] (processing) -- (output);
+    %\path [line] (storage.350) -| (output.100);
+    %\path [line] (output.80) |- (storage.10);
+    \path [line, dashed] (processing) -- (storage);
+    \path [line, dashed] (output) |- (storage);
+    \path [line] (command) -- (input);
+    \path [line] (command) -- (processing);
+    \path [line] (command) -- (output);
+  \end{tikzpicture}
+\end{center}
+
+The command line component will act not only as an interface with the user, but
+also interact with each of the input, processing \& output components, calling
+them with the appropriate options and so on. This reduces coupling between the
+other stages, since the command line component is the only one that needs
+knowledge of all the stages, allowing for increased modularity of the code.
+
+In addition to this structure, I also need to determine which language is the
+appropriate choice for implementing this project, since each will have their own
+strengths \& weaknesses, and how I will go about testing that everything is
+working as it should along the way. While deciding on testing strategies before
+programming is not required, it is important to test at some point in
+development (whether it be throughout, at the end or both) and deciding on it
+beforehand ensures that it will not be neglected.
+
+I will be following the waterfall model of development for this project, as far
+as is sensible, as maintenance is outside the scope of this project.
+
 \section{Requirements Analysis}
-This project consists of two main parts:
+This project consists of five parts:
 \begin{itemize}
   \item One or more parsers, to transform the code base into an appropriate data
-    structure. This data structure can then be manipulated and used to extract
-    the information needed from the code.
-  \item Code to transform the intermediate data into a human-readable format.
+    structure.
+  \item Code to process the above data structure and extract the required
+    information from the code.
+  \item Storage of the intermediate data.
+  \item Code to transform the intermediate data into one or more human-readable
+    formats.
+  \item A command line interface, for use by the user.
 \end{itemize}
 
-In addition to these two components there should also be a means to store the
-intermediate data; while this is not strictly required, it does allow for us to
-improve the runtime of the process. This can be done by determining whether a
-file has changed since it was last parsed, if it has not there is no need to
-reinterpret the file, we can simply use the data that is already stored about
-it.
-
-This will be done by storing the hash of the file when it is parsed, allowing
-the program to just run over the hashes in the event that nothing has changed.
-This is particularly useful, as it will allow for quick incremental generation
-of the documentation, so developers using the program will find it much more
-convenient to quickly use to check that their documentation is in order.
-
 For the purposes of this project, I will only be implementing a parser for one
-programming language, I have chosen to implement it for C since there are many
-large, open-source \& well documented code bases written in C available online;
-this will make my testing both more thorough and realistic. I believe that
-implementing more than one parser would be a poor use of time \& resources and
-is beyond the scope of this project.
+programming language, since I believe that implementing more than one parser
+would be a poor use of time \& resources and is beyond the scope of this
+project. It will need to be a simple, standardised language to be completed in
+the time available, there should also be sufficient code available written in
+the language to provide thorough test cases. I have chosen to implement the
+parser for C, as fulfils these requirements well.
 
-Likewise, I will be implementing one concrete output format for the program,
-namely HTML. I have chosen to use HTML as I am already familiar with it, whereas
-implementing a \LaTeX\ or PDF output would involve much more work - particularly
-to implement cross referencing, which should be trivial in HTML - for a similar
-result.
+Likewise, I will be implementing one concrete output format for the program; the
+format should be one I am already familiar with and should easily support
+linking between sections. I have decided that HTML is the best fit for the
+output format, since it is easy to create \& does not require any extra tools to
+generate or view the final result.
 
-This does not, however, mean that I will be designing this software without
-other input \& output formats in mind; the software should be developed with a
-view to be expanded in the future, and therefore should be coded to be as
-modular as possible.
+Even though I am only implementing one of each of the above stages, this does
+not mean that I will be designing this software without other input \& output
+formats in mind; the software should be developed with a view to be expanded in
+the future, and therefore should be coded to be as modular as possible.
 
-\section{Action Plan}
-I then created an action plan with these main aims in mind in order to ensure
-the project's success; I will be be adopting the waterfall model to develop this
-project, and so the plan follows that general structure.
-\begin{enumerate}
-  \item Research - look at existing documentation software, and identify their
-    flaws \& attributes.
-  \item Identify the features required in this parser, taking into account the
-    strengths \& weaknesses identified in the previous phase to determine the
-    functionality to be included or improved upon.
-  \item Develop an outline for the project so that an awareness of structure and
-    flow can form. Plan what order the code shall be written in and what order -
-    what tests need to be performed along the way to ensure functionality.
-  \item Choose the programming language best suited to the project - learn
-    and/or practise the language to ensure fluency and suitability for the
-    project.
-  \item List and develop tests that will take place during the coding and at the
-    end to ensure the project functions correctly.
-  \item Begin writing and testing code - revisit plan if necessary to make
-    alterations.
-  \item Complete end testing and make any necessary alterations
-\end{enumerate}
+Strictly speaking, no storage of data is required, but adding this as a
+component of the project does allow for us to improve the runtime of the
+process. This can be done by determining whether a file has changed since it was
+last parsed, if it has not there is no need to reinterpret the file, we can
+simply use the data that is already stored about it. This is particularly
+useful, as it will allow for quick incremental generation of the documentation,
+so developers using the program will find it much more convenient to quickly use
+to check that their documentation is in order.
 
 \section{Comment Format}
-I have previously used both Javadoc \& doxygen and have reviewed them again
-prior to beginning this project. I have therefore kept their functionality and
-limitations in mind while designing the comment format.
+In order to produce documentation from source code I need to define what
+constitutes documentation, both so that I can parse \& process it and so that
+appropriate documentation is actually written. This means defining a comment
+format, I have previously used both Javadoc \& doxygen and have reviewed them
+again prior to beginning this project. I have therefore kept their functionality
+and limitations in mind while designing the comment format.
 
 In my proposal, I specifically mentioned the compatibility with existing comment
 formats was highly important to produce a useful result; as such, consideration
 about the format I was going to be using had to be undertaken before any work
 could begin. Both doxygen and Javadoc's comment formats are similar to one
-another, and together they have quite a large `market' share, so it was sensible
+another, and together they have quite a large market share, so it was sensible
 to design a format that was compatible with these as much as possible. Ideally,
 my format should be equal to or a superset of their formats, so that any
 comments written with them in mind will work with the software I write.
@@ -126,8 +153,7 @@ of which can be found in the appendix):
         is absent a flow annotation, it will be assumed that it is
         \lstinline|[in]|.
         doxygen already uses this way of describing flows; Javadoc does not have
-        any such feature, this is presumably because Java only does
-        pass-by-value and so this was deemed unnecessary.
+        any such feature.
       \item \lstinline|@return| is used to describe what will be returned by the
         function; this may include under what conditions it will return an error
         and what those error values may be.
@@ -140,12 +166,12 @@ of which can be found in the appendix):
   \subsection{Programming Language}
     I opted to use Ruby to implement this project, whilst I do not have as much
     experience with Ruby as some other languages (like Java), I felt it was best
-    suited to the project. This is because one of Ruby's strengths is in its
-    powerful text-manipulation capabilities, whereas processing Strings in Java
-    can be quite heavyweight in terms of memory.
+    suited to the project. Since one of Ruby's strengths is in its powerful
+    text-manipulation capabilities it is well suited to this project, whereas
+    processing Strings in Java can be quite heavyweight in terms of memory.
 
     Additionally, having looked into implementing parsers in various languages,
-    I found that Treetop\cite{website:treetop} was particularly to my liking.
+    I found that Treetop\cite{website:treetop} was well-suited to my needs.
     Treetop is a domain-specific language for Ruby, that facilitates the
     creation of parsing expression grammars; one of the particularly useful
     things about Treetop is that it allows you to define specific types for
@@ -208,3 +234,26 @@ body of the code has been written.
     have to be used on a sample of code from the workplace ensuring that it
     functions across a wide spectrum of styles and is therefore suitable for use
     in the working environment.
+
+% \section{Action Plan}
+% I then created an action plan with these main aims in mind in order to ensure
+% the project's success; I will be be adopting the waterfall model to develop this
+% project, and so the plan follows that general structure.
+% \begin{enumerate}
+%   \item Research - look at existing documentation software, and identify their
+%     flaws \& attributes.
+%   \item Identify the features required in this parser, taking into account the
+%     strengths \& weaknesses identified in the previous phase to determine the
+%     functionality to be included or improved upon.
+%   \item Develop an outline for the project so that an awareness of structure and
+%     flow can form. Plan what order the code shall be written in and what order -
+%     what tests need to be performed along the way to ensure functionality.
+%   \item Choose the programming language best suited to the project - learn
+%     and/or practise the language to ensure fluency and suitability for the
+%     project.
+%   \item List and develop tests that will take place during the coding and at the
+%     end to ensure the project functions correctly.
+%   \item Begin writing and testing code - revisit plan if necessary to make
+%     alterations.
+%   \item Complete end testing and make any necessary alterations
+% \end{enumerate}
