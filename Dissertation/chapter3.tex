@@ -217,9 +217,61 @@ allows you to interact with data from the database using the normal Ruby types.
         that this was not a valid solution in the time available.
 
   \subsection{Storage}
+    The sqlite3 Ruby library made interacting with my database very natural, SQL
+    statements are executed with a method that takes a query string and results
+    are returned as a \lstinline|ResultSet|, which can be enumerated just like
+    an array. Additionally, each result can either be represented as an array or
+    a hash; I found using hashes much more natural because it allows you
+    explicitly refer to columns.
 
+    \begin{code}[language=ruby, gobble=6]
+      db = SQLite3::Database.new("db.sqlite")
+      db.execute("SELECT * FROM files").each do |result|
+        puts "The file with #{result['id']} has a hash of: #{result['hash']}"
+      end
+    \end{code}
 
-    \subsubsection{Foreign Keys}
+    These four lines above are sufficient to open a database called `db.sqlite'
+    in the current directory, query for all the entries stored in the `files'
+    table and print out information for each. The way that sqlite3 functioned
+    allowed me to write natural code with it, and didn't get in the way of
+    expressing things how I wanted to. sqlite3 also allows statements to be
+    prepared and executed multiple times, this reduces the time spent creating
+    and destroying objects, and also allows for parameters to be bound to
+    placeholders. For example:
+
+    \begin{code}[language=ruby, gobble=6]
+      statement = db.prepare("SELECT * FROM files WHERE id = ?")
+      file1 = statement.execute(1)
+      file99 = statement.execute(99)
+    \end{code}
+
+    When the statement prepared, the question mark becomes a placeholder for an
+    argument to be passed into later on; when executed, the statement works just
+    like the previous example. I used these prepared statements heavily
+    throughout my code, since I did a lot of looping and executing queries
+    within those loops, it removed excess object creation and made the code
+    clearer by allowing me to move the long SQL queries out of the loops.
+
+    \subsubsection{Database Structure}
+      The data stored in the database was split across several tables and tied
+      together using foreign keys; all bar one of the tables reference the ID of
+      the file they are contained in. The exception to this being the
+      `arguments' table, which references the ID of the function they are found
+      in instead, since the `functions' table already contains that information,
+      so storing it again would be redundant.
+
+      Having foreign keys running through my database like this ensures that
+      nothing can be inserted with a non-existent ID, thereby reducing insertion
+      anomalies, but it also gained me a second advantage: when defining foreign
+      keys in SQL, it is possible to design what happens when a particular entry
+      is deleted. I specified in my table creation statements that when the
+      entry a particular key references is deleted, the entry referencing it is
+      also deleted; since every table in my database has a foreign key, a
+      deletion of a file in the `files' table cascades all the way through,
+      removing all the data about that file. This ensures that there is never
+      any stale data kept in the database, which will improve run time by
+      keeping the data sets smaller.
 
 \section{Generating the Output}
 
