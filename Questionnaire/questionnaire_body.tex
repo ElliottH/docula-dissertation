@@ -1,0 +1,150 @@
+
+\hypersetup{
+  linkcolor=black,
+  linkbordercolor={0 0 0},
+  colorlinks=false
+}
+
+\def\LayoutTextField#1#2{\makebox[6em][l]{#1}\raisebox{-.5ex}{#2}}
+\def\LayoutChoiceField#1#2{\makebox[6em][l]{#1}#2}
+\newdimen\longline
+\longline=\textwidth\advance\longline-6em
+
+\makeatletter
+\patchcmd{\HyField@FlagsRadioButton}{\HyField@SetFlag{Ff}{Radio}}{}{}{}
+\makeatother
+\def\DefaultOptionsofRadio{print}
+
+  \begin{center}
+    \bf Docula: Evaluation Questionnaire
+  \end{center}
+  Along with this questionnaire you should have received a .gem file; to allow
+  for convenient use of docula whilst testing it functionality, please execute
+  the following in a shell\footnote{Depending on your Ruby setup, this may need
+  to be executed as root}:
+  \begin{verbatim}
+    $ gem install --local docula-*.gem
+  \end{verbatim}
+  This will properly install docula and its dependencies onto your system. You
+  should then be able to use the \verb|docula| command to generate documentation
+  for a particular directory. The resulting documentation should be available in
+  the \verb|output/| directory by default.
+
+  When testing has completed, you can remove docula with:
+  \begin{verbatim}
+    $ gem uninstall docula
+    $ gem cleanup
+  \end{verbatim}
+  The second command will remove all the dependencies that were installed,
+  provided they are no longer required, leaving your system as it was before
+  testing.
+
+  To remove any traces of docula from a directory you used it in, simply:
+  \begin{verbatim}
+    $ rm -rf .docula/ output/
+  \end{verbatim}
+
+  The rest of this document contains some questions that will help me to
+  evaluate the functionality of \verb|docula|, please take the time to fill them
+  out; all non-multiple choice questions are optional.
+
+  \newpage
+
+  \begin{Form}
+    \noindent
+    Were you able to install the software using the instructions on the previous
+    page?
+    \medskip
+    \begin{center}
+      \ChoiceMenu[radio,name=install]{}{Yes, No}\\
+    \end{center}
+
+    \bigskip
+    \noindent
+    \verb|docula| can generate documentation for C source \& header files, if
+    you were to run it on a directory containing these files, it should produce
+    documentation.\\
+    Were you able to generate successfully generate any documentation?
+    \medskip
+    \begin{center}
+      \ChoiceMenu[radio,name=generate]{}{Yes, No}\\
+    \end{center}
+
+    \bigskip
+    \noindent
+    When running \verb|docula|, did any of your source files fail to be parsed?
+    If so, how many?
+    \medskip
+    \begin{center}
+      \ChoiceMenu[radio,name=generate]{}{None, A Few, A Lot, Most, All}\\
+    \end{center}
+
+    \bigskip
+    \noindent
+    How did the speed compare to your usual documentation generation software?
+    \medskip
+    \begin{adjustwidth}{-2cm}{-2cm}
+    \begin{center}
+      \medskip
+      \ChoiceMenu[radio,name=speed]{}{Much Slower, Slower, About the Same,
+      Quicker, Much Quicker}\\
+      \bigskip
+    \end{center}
+    \end{adjustwidth}
+
+    \bigskip
+    \noindent
+    \verb|docula| uses the checksums of files to determine whether documentation
+    needs to be regenerated when it is rerun. If you make a change to one or
+    two files in your directory, \verb|docula| should only need to re-parse
+    those files.\\
+    How did the speed compare to your usual documentation generation software on
+    the second execution?
+    \medskip
+    \begin{adjustwidth}{-2cm}{-2cm}
+    \begin{center}
+      \medskip
+      \ChoiceMenu[radio,name=speed2]{}{Much Slower, Slower, About the Same,
+      Quicker, Much Quicker}\\
+      \bigskip
+    \end{center}
+    \end{adjustwidth}
+
+    \bigskip
+    \noindent
+    How does the documentation produce compare with your usual documentation
+    generation software?
+    \medskip
+    \begin{adjustwidth}{-2cm}{-2cm}
+    \begin{center}
+      \medskip
+      \ChoiceMenu[radio,name=doccompare]{}{Much Better, Better, About the Same,
+      Worse, Much Worse}\\
+    \end{center}
+    \end{adjustwidth}
+    \medskip
+    Why?\\
+    \medskip
+    \TextField[name=doccomment,multiline=true,width=\longline,height=2in,
+      borderwidth=0,backgroundcolor={.85 .85 .85}]{}\\
+
+    \bigskip
+    \noindent
+    Was there anything in particular that you felt was missing from the
+    documentation?\\
+    \medskip
+    \TextField[name=missingcomment,multiline=true,width=\longline,height=2in,
+      borderwidth=0,backgroundcolor={.85 .85 .85}]{}\\
+
+    \bigskip
+    \noindent
+    Additional Comments\\
+    \medskip
+    \TextField[name=additionalcomment,multiline=true,width=\longline,height=2in,
+      borderwidth=0,backgroundcolor={.85 .85 .85}]{}\\
+  \end{Form}
+
+  \begin{center}
+    \bigskip\hrule\bigskip
+    \emph{Thank you for taking the time to complete this questionnaire.}
+  \end{center}
