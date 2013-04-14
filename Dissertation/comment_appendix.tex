@@ -1,32 +1,35 @@
 \chapter{Comment Format}
 
-\begin{lstlisting}[language=c]
+\begin{lstlisting}[language=c,gobble=4]
     /**
-     * In order to ensure compatibility with Doxygen, I needed to create a
-     * comment format that was as similar to theirs as possible.
-     * Any block comment with a double star opening will be considered for a
-     * documentation string.
+     * In order to ensure compatibility with Doxygen, I needed to
+     * create a comment format that was as similar to theirs as
+     * possible.
+     * Any block comment with a double star opening will be
+     * considered for a documentation string.
      */
 
-     /// Triple slashes opening a single line comment are also considered.
+     /// Triple slashes opening a single line are also considered.
 
      /**
-      * Documentation immediately preceding a function definition will become
-      * associated with that function.
+      * Documentation immediately preceding a function definition
+      * will become associated with that function.
       *
-      * Typically, the first paragraph is a summary, with the subsequent
-      * paragraphs providing greater detail; this can be disabled in the
-      * options.
+      * Typically, the first paragraph is a summary, with the
+      * subsequent paragraphs providing greater detail; this can
+      * be disabled in the options.
       *
       * @param[in] Description of first argument
       * @param[inout] Description of second argument
       * @return Description of return value
-      * @error Describes what make be returned in the case of an error.
+      * @error Describes what make be returned in the case of an
+      *        error.
       *
-      * The @param annotations are for describing the arguments passed into
-      * the function - what they represent and/or the range or valid values -
-      * they also specify whether the argument is used solely for input,
-      * output, or both ([in], [out] and [inout], respectively).
+      * The @param annotations are for describing the arguments
+      * passed into the function - what they represent and/or the
+      * range or valid values - they also specify whether the
+      * argument is used solely for input, output, or both
+      * ([in], [out] and [inout], respectively).
       */
     int example(int arg1, char* arg2);
 
@@ -39,10 +42,11 @@
     /**
      * @file
      *
-     * Documentation marked with the @file annotation denote that they are
-     * referring to the file as a whole.
+     * Documentation marked with the @file annotation denote that
+     * they are referring to the file as a whole.
      *
-     * These comments may also include other relevant information, such as:
+     * These comments may also include other relevant information,
+     * such as:
      * @copyright My Company Inc.
      * @author Elliott Hillary
      * @created 2012-10-18
