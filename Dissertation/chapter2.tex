@@ -16,53 +16,35 @@
 % understanding.
 
 \chapter{Preparation}
-Before I can begin to write any code for this project, I first need to decide on
-the components that will make up the core of it and ensure that any work that
-needs to be done before code writing commences is completed. First step in this
-is to define an overall structure to the project.
-
-\begin{center}
-  \vspace*{5mm}
-  \begin{tikzpicture}[node distance = 2cm, auto]
-    % Place nodes
-    \node [block_spaced] (input) {input};
-    \node [block_spaced, right=of input] (processing) {data processing};
-    \node [block_spaced, above=of processing] (storage) {data storage};
-    \node [block_spaced, right=of processing] (output) {output formatting};
-    \node [block_spaced, below=of processing] (command) {command line};
-    % Draw edges
-    %\path [line] (input) -- (processing);
-    %\path [line] (processing.100) -- (storage.260);
-    %\path [line] (storage.280) -- (processing.80);
-    %\path [line] (processing) -- (output);
-    %\path [line] (storage.350) -| (output.100);
-    %\path [line] (output.80) |- (storage.10);
-    \path [line, dashed] (processing) -- (storage);
-    \path [line, dashed] (output) |- (storage);
-    \path [line] (command) -- (input);
-    \path [line] (command) -- (processing);
-    \path [line] (command) -- (output);
-  \end{tikzpicture}
-\end{center}
-
-The command line component will act not only as an interface with the user, but
-also interact with each of the input, processing \& output components, calling
-them with the appropriate options and so on. This reduces coupling between the
-other stages, since the command line component is the only one that needs
-knowledge of all the stages, allowing for increased modularity of the code.
-
-In addition to this structure, I also need to determine which language is the
-appropriate choice for implementing this project, since each will have their own
-strengths \& weaknesses, and how I will go about testing that everything is
-working as it should along the way. While deciding on testing strategies before
-programming is not required, it is important to test at some point in
-development (whether it be throughout, at the end or both) and deciding on it
-beforehand ensures that it will not be neglected.
-
-I will be following the waterfall model of development for this project, as far
-as is sensible, as maintenance is outside the scope of this project.
-
 \section{Requirements Analysis}
+
+The requirement of this project is to produce a program that can successfully
+generate documentation for source code and that groups the resulting
+documentation in a logical manner.
+
+This can be broken down into two smaller targets:
+\begin{enumerate}
+  \item A section capable of parsing code to extract the documentation and
+    related information.
+  \item A section that transforms the extracted data into a document.
+\end{enumerate}
+
+The documentation produced should provide details for all functions documented,
+correctly matching up any information provided about arguments with the actual
+arguments and their type from the function itself.
+
+Additionally, the program should require no intervention from the user to
+complete its generation process.
+
+I also need to determine which language is the appropriate choice for
+implementing this project, since each will have their own strengths \&
+weaknesses, and how I will go about testing that everything is working as it
+should along the way. While deciding on testing strategies before programming is
+not required, it is important to test at some point in development (whether it
+be throughout, at the end or both) and deciding on it beforehand ensures that it
+will not be neglected.
+
+\section{Software Architecture}
 This project consists of five parts:
 \begin{itemize}
   \item One or more parsers, to transform the code base into an appropriate data
@@ -76,32 +58,60 @@ This project consists of five parts:
 \end{itemize}
 
 For the purposes of this project, I will only be implementing a parser for one
-programming language, since I believe that implementing more than one parser
-would be a poor use of time \& resources and is beyond the scope of this
-project. It will need to be a simple, standardised language to be completed in
-the time available, there should also be sufficient code available written in
-the language to provide thorough test cases. I have chosen to implement the
-parser for C, as fulfils these requirements well.
+programming language; it will need to be a simple, standardised language to be
+completed in the time available, there should also be sufficient code available
+written in the language to provide thorough test cases. I have chosen to
+implement the parser for C, as it is relatively easy to parse, and there is
+plenty of example code available on the internet.
 
 Likewise, I will be implementing one concrete output format for the program; the
 format should be one I am already familiar with and should easily support
 linking between sections. I have decided that HTML is the best fit for the
 output format, since it is easy to create \& does not require any extra tools to
-generate or view the final result.
+view the final result.
 
 Even though I am only implementing one of each of the above stages, this does
 not mean that I will be designing this software without other input \& output
 formats in mind; the software should be developed with a view to be expanded in
 the future, and therefore should be coded to be as modular as possible.
 
-Strictly speaking, no storage of data is required, but adding this as a
-component of the project does allow for us to improve the runtime of the
-process. This can be done by determining whether a file has changed since it was
-last parsed, if it has not there is no need to reinterpret the file, we can
-simply use the data that is already stored about it. This is particularly
-useful, as it will allow for quick incremental generation of the documentation,
-so developers using the program will find it much more convenient to quickly use
-to check that their documentation is in order.
+Reprocessing all the code in a large project can become time-consuming; the data
+storage component allows us to generate documentation incrementally, avoiding
+large time penalties and allowing for documentation to be available in
+interactive time frames. This can be done by determining whether a file has
+changed since it was last parsed, if it has not there is no need to reinterpret
+the file, we can simply use the data that is already stored about it. This is
+particularly useful, as it will allow for quick incremental generation of the
+documentation, so developers using the program will find it much more convenient
+to quickly use to check that their documentation is in order.
+
+I will be following the waterfall model of development for this project, as far
+as is sensible, as maintenance is outside the scope of this project.
+
+\begin{center}
+  \vspace*{5mm}
+  \begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [block_spaced] (input) {input};
+    \node [block_spaced, right=of input] (processing) {data processing};
+    \node [block_spaced, above=of processing] (storage) {data storage};
+    \node [block_spaced, right=of processing] (output) {output formatting};
+    \node [block_spaced, below=of processing] (command) {application logic};
+    % Draw edges
+    % \path [line] (input) -- (processing);
+    \path [line, dashed] (processing) -- (storage);
+    \path [line, dashed] (storage) -| (output);
+    \path [line] (command) -- (input);
+    \path [line] (command) -- (processing);
+    \path [line] (command) -- (output);
+  \end{tikzpicture}
+\end{center}
+
+The application component will act not only as an interface with the user, but
+also interact with each of the input, processing \& output components, calling
+them with the appropriate options and so on. This reduces coupling between the
+other stages, since the command line component is the only one that needs
+knowledge of all the stages, allowing for increased modularity of the code.
 
 \section{Comment Format}
 In order to produce documentation from source code I need to define what
@@ -137,6 +147,7 @@ of which can be found in the appendix):
 \end{lstlisting}
 
 \begin{itemize}
+  \item Asterisks at the beginning of lines within the comment are ignored.
   \item The first paragraph (i.e.~up to the first empty line) is considered to
     be a summary, and gives a brief outline of the intended use. This is
     standard practice with Javadoc, and can be enabled in doxygen.
@@ -167,8 +178,7 @@ of which can be found in the appendix):
     I opted to use Ruby to implement this project, whilst I do not have as much
     experience with Ruby as some other languages (like Java), I felt it was best
     suited to the project. Since one of Ruby's strengths is in its powerful
-    text-manipulation capabilities it is well suited to this project, whereas
-    processing Strings in Java can be quite heavyweight in terms of memory.
+    text-manipulation capabilities it is well suited to this project.
 
     Additionally, having looked into implementing parsers in various languages,
     I found that Treetop\cite{website:treetop} was well-suited to my needs.
@@ -185,7 +195,7 @@ of which can be found in the appendix):
   \subsection{Version Control}
     Given that I have more previous experience with git than with any other
     version control system, I have decided to use it to manage my project. It
-    provides additional advantages over some other version control systems,
+    provides some advantages over some other version control systems,
     particularly in the fact that it is distributed; which means that the entire
     development history of the project will be available to me, no matter what
     machine I am working on.
@@ -196,10 +206,10 @@ of which can be found in the appendix):
     Machine.
 
 \section{Testing}
-The testing of the project will be split in to two parts; part of it,
-particularly in the development of the parser, will be performed during
-development and the rest will be performed after the completion of the main
-body of the code has been written.
+The testing of the project will be split into parts; part of it, particularly
+in the development of the parser, will be performed during development and the
+rest will be performed after the completion of the main body of the code has
+been written.
 
   \subsection{Regression Testing}
     In order to implement the parser successfully, I will be making use of
@@ -219,21 +229,33 @@ body of the code has been written.
     any new ones later in development, allowing me to fix them before they cause
     any serious problems.
 
-  \subsection{End Testing}
+  \subsection{User Testing}
     Evaluating documentation is inherently a subjective process, and so it would
     not be feasible to evaluate by any formal means; as such, I will be creating
     a questionnaire which will be given to several members of staff at
     Dr.~Watts' company, along with the software itself, for them to evaluate
     compared to their usual documentation solutions. This questionnaire, and any
     familiarisation with the software required, should take no longer than half
-    an hour; to take any longer is unnecessary, as it is initial opinions which
-    will ultimately decide someone's choice of whether or not to use the
-    software, and so I would like to attempt to capture that within the survey.
+    an hour.
 
     In order for the surveys to be completed the documentation software will
     have to be used on a sample of code from the workplace ensuring that it
     functions across a wide spectrum of styles and is therefore suitable for use
     in the working environment.
+
+  \subsection{Evaluation}
+    In order to properly evaluate the success of the project I will be
+    evaluating my program by the following criteria:
+    \begin{description}
+      \item[Functionality -] Does the program produce correct documentation for
+        a test set of projects? This will be evaluated manually, by myself, to
+        check that the output produced contains all the information expected.
+      \item[Time -] Does the program execute quickly enough to be a viable
+        documentation solution?
+      \item[Correctness -] Is the program actually useful to users? This will be
+        evaluated using the results collected in the user testing.
+    \end{description}
+
 
 % \section{Action Plan}
 % I then created an action plan with these main aims in mind in order to ensure
