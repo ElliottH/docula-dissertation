@@ -16,27 +16,47 @@
 
 \chapter{Implementation}
 
+\begin{center}
+  \vspace*{5mm}
+  \begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [block_spaced] (input) {input};
+    \node [block_spaced, right=of input] (processing) {data processing};
+    \node [block_spaced, above=of processing] (storage) {data storage};
+    \node [block_spaced, right=of processing] (output) {output formatting};
+    \node [block_spaced, below=of processing] (command) {application logic};
+    % Draw edges
+    % \path [line] (input) -- (processing);
+    \path [line, dashed] (processing) -- (storage);
+    \path [line, dashed] (storage) -| (output);
+    \path [line] (command) -- (input);
+    \path [line] (command) -- (processing);
+    \path [line] (command) -- (output);
+  \end{tikzpicture}
+\end{center}
+
 \section{The Parser}
 To implement my parser, I made use of an existing domain-specific language
 available as a Ruby library called Treetop\cite{website:treetop}; Treetop allows
 for easy implementation of Parsing Expression Grammars, which, simply put, are
 grammars that built up out of a combination of rules and regular expressions.
 
-Parsing Expression Grammars were particularly appealing to me for two reasons:
-firstly, they are essentially a more powerful version of regular expressions,
-with which I am already familiar and secondly, they can be made to run in
-constant time if implemented as a packrat parser, which Treetop does. This
-constant time guarantee is provided by the process of memoization, which trades
-off time for space by caching previous inputs and the resulting parse trees to
-remove the need for repeated computations.
+Parsing Expression Grammars\cite{website:peg} were particularly appealing to me
+for two reasons: firstly, they are essentially a more powerful version of
+regular expressions, with which I am already familiar and secondly, they can be
+made to run in constant time if implemented as a packrat parser, which Treetop
+does. This constant time guarantee is provided by the process of memoization,
+which trades off time for space by caching previous inputs and the resulting
+parse trees to remove the need for repeated computations.
 
-Treetop grammars are written as their own .treetop files, which are then used
-to generate the parsers by the \lstinline|tt| program. The end result is a Ruby
-source file which can be included and used to parse the language defined by the
-grammar. Treetop also allows you to define a class that nodes within the parsed
-data should be instantiated as, this means that nodes can be given methods with
-which they can parse themselves or their children; which is much preferable to
-the traditional methods of writing code to walk the tree structures.
+Treetop grammars are written as their own .treetop files, which are then used by
+the \lstinline|tt| program to generate executable parsers. The end result is a
+Ruby source file which can be included and used to parse the language defined by
+the grammar. Treetop also allows you to define a class that nodes within the
+parsed data should be instantiated as, this means that nodes can be given
+methods with which they can parse themselves or their children; which is much
+preferable to the traditional methods of writing code to walk the tree
+structures.
 
 \begin{code}[language=treetop]
   rule comment
@@ -64,6 +84,10 @@ should be instantiated using the class \lstinline|CommentNode|;
 \lstinline|CommentNode| defines a method with which the text of the comment
 can be extracted.
 
+The parser takes the contents of a file and, provided that they are `valid' C
+(as understood by my parser), produces a parse tree which instantiates the
+classes I defined for the appropriate nodes. This tree can then be navigated
+using the methods I implemented in the classes.
 
   \subsection{Regression Testing}
     To ensure that I was properly implementing my grammar for C, I wrote some
@@ -107,18 +131,17 @@ can be extracted.
   \subsection{Parsing Problems}
     As I wrote my initial grammar for the C parser, it became apparent that I
     was having some problems; I got to the point where implementing new rules
-    within the grammar would cause other tests to fail, the problem was that
-    describing C correctly required such a huge grammar that the rules were
-    interacting in ways I had not accounted for. This meant that progress on the
-    grammar slowed to a crawl, and it became apparent that the grammar would
-    need to be largely rethought to fully parse C.
+    would cause other tests to fail, the problem was that describing C correctly
+    required such a large enough grammar that the rules were interacting in ways
+    I had not accounted for. This meant that progress on the grammar slowed to a
+    crawl, and it became apparent that the grammar would need to be largely
+    rethought to fully parse C.
 
-    I realised, however, that in order to parse C for the purposes of generating
-    documentation, I did not need my parser to completely understand the
-    language, instead it needed to only understand enough to parse to top level.
-    I therefore wrote a new, simpler parser that understood how to navigate
-    through the C files, rather than parsing all of it; this brought an added
-    advantage of improving the runtime of the parser.
+    Whilst having a grammar that understood all of the C language would be
+    ideal, such a parser would be slower than necessary and capture more detail
+    than was required, therefore I wrote a new, simpler parser that understood
+    how to navigate through the C files and parse at the top level, rather than
+    parsing all of it.
 
     Instead of parsing function bodies, the simplified parser contains rules to
     match pairs of braces within functions, ignoring those in strings and
@@ -147,6 +170,26 @@ and stores all data in a file, rather than on a SQL server; this means that no
 setup of databases is required on the part of the user. I used the
 sqlite3\cite{website:sqlite} Ruby library to interact with my database, which
 allows you to interact with data from the database using the normal Ruby types.
+
+\begin{center}
+  \vspace*{5mm}
+  \begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [block_spaced] (processing) {initial processing};
+    \node [block_spaced, above=of processing] (storage) {data storage};
+    \node [block_spaced, right=of processing] (post) {post processing};
+    % Draw edges
+    % \path [line] (input) -- (processing);
+    \path [line, dashed] (processing) -- (storage);
+    \path [line, dashed] (storage) -| (post);
+    \path [line, dotted] (post) |- (storage);
+    \path [line] (processing) -- (post);
+  \end{tikzpicture}
+\end{center}
+
+This section actually breaks down into the the above layout; processing must be
+performed in two stages, this is because some of it cannot take place until
+after all the files have been parsed.
 
   \subsection{Processing}
     The classes I defined for use in the parse tree provide easy access to the
@@ -202,9 +245,10 @@ allows you to interact with data from the database using the normal Ruby types.
         Once the data for all files in the directory has been added to the
         database, some extra processing takes place to resolve which files
         include one another. By looping through all the includes encountered
-        and determining whether it refers another file that has been processed,
-        links are built between files, which are later used by the output stage
-        to allow a user to jump from one file to one of its includes easily.
+        and determining whether it refers to another file that has been
+        processed, links are built between files, which are later used by the
+        output stage to allow a user to jump from one file to one of its
+        includes easily.
 
         To determine if one file refers to another, I decided to check whether a
         following the path described in the include exists, relative to that
@@ -222,36 +266,38 @@ allows you to interact with data from the database using the normal Ruby types.
     are returned as a \lstinline|ResultSet|, which can be enumerated just like
     an array. Additionally, each result can either be represented as an array or
     a hash; I found using hashes much more natural because it allows you
-    explicitly refer to columns.
+    explicitly refer to columns, like so:
 
     \begin{code}[language=ruby, gobble=6]
       db = SQLite3::Database.new("db.sqlite")
       db.execute("SELECT * FROM files").each do |result|
-        puts "The file with #{result['id']} has a hash of: #{result['hash']}"
+        puts "The file with #{result['id']} has path: #{result['path']}"
       end
     \end{code}
 
-    These four lines above are sufficient to open a database called `db.sqlite'
-    in the current directory, query for all the entries stored in the `files'
-    table and print out information for each. The way that sqlite3 functioned
-    allowed me to write natural code with it, and didn't get in the way of
-    expressing things how I wanted to. sqlite3 also allows statements to be
-    prepared and executed multiple times, this reduces the time spent creating
-    and destroying objects, and also allows for parameters to be bound to
-    placeholders. For example:
+    \textbf{TODO: DB Schema stuffs!}
 
-    \begin{code}[language=ruby, gobble=6]
-      statement = db.prepare("SELECT * FROM files WHERE id = ?")
-      file1 = statement.execute(1)
-      file99 = statement.execute(99)
-    \end{code}
+    % These four lines above are sufficient to open a database called `db.sqlite'
+    % in the current directory, query for all the entries stored in the `files'
+    % table and print out information for each. The way that sqlite3 functioned
+    % allowed me to write natural code with it, and didn't get in the way of
+    % expressing things how I wanted to. sqlite3 also allows statements to be
+    % prepared and executed multiple times, this reduces the time spent creating
+    % and destroying objects, and also allows for parameters to be bound to
+    % placeholders. For example:
 
-    When the statement prepared, the question mark becomes a placeholder for an
-    argument to be passed into later on; when executed, the statement works just
-    like the previous example. I used these prepared statements heavily
-    throughout my code, since I did a lot of looping and executing queries
-    within those loops, it removed excess object creation and made the code
-    clearer by allowing me to move the long SQL queries out of the loops.
+    % \begin{code}[language=ruby, gobble=6]
+    %   statement = db.prepare("SELECT * FROM files WHERE id = ?")
+    %   file1 = statement.execute(1)
+    %   file99 = statement.execute(99)
+    % \end{code}
+
+    % When the statement prepared, the question mark becomes a placeholder for an
+    % argument to be passed into later on; when executed, the statement works just
+    % like the previous example. I used these prepared statements heavily
+    % throughout my code, since I did a lot of looping and executing queries
+    % within those loops, it removed excess object creation and made the code
+    % clearer by allowing me to move the long SQL queries out of the loops.
 
     \subsubsection{Database Structure}
       The data stored in the database was split across several tables and tied
@@ -280,10 +326,23 @@ currently there is only one available output format, HTML, however the
 outputting process has been designed so that a new output format can be easily
 added. To do this, a generic \lstinline|Output| class was created that defines
 methods that can be used to extract all the data required for producing the
-output. This means that creation of a new output format only requires the
-definition of a new subclass of \lstinline|Output| that defines an
+output, these methods provide easy access to all the queries commonly needed to
+produce documentation. This means that creation of a new output format only
+requires the definition of a new subclass of \lstinline|Output| that defines an
 \lstinline|output| method, which can call the other methods already defined to
 get its data.
+
+Initially, I considered generating XML from the required elements in the
+database, and then using XSLT to create the final documents, but the XSLT
+processor libraries available for Ruby did not provide enough documentation for
+me to feel comfortable using them in this instance.
+
+The \lstinline|HTMLOutput| class creates an overview page, listing all the files
+that were parsed and an excerpt of their file-level documentation (if any
+exists), and then extracts the data for each file from the database and creates
+an HTML file for each. These files are placed within directories that match the
+structure of the original codebase, allowing for convenient navigation by the
+user to the correct location and making it easier to link between files.
 
 Generating output can be a messy process, especially with HTML, as inevitably
 code and HTML markup end up being interleaved together; I have done my best to
@@ -314,11 +373,16 @@ have been:
 
 This would have also been more expensive to compute, as it requires mutating the
 string four times, rather than just creating it correctly in the first place.
-This is one example of a reason I chose Ruby in the in my proposal.
+This is one example of a reason I chose Ruby in my proposal.
+
+While generating the output the code checks if `style.css' already exists in the
+output directory, if there is not one already present, a default one is created.
+All important HTML elements in the output files have IDs or classes associated
+with them, allowing for convenient styling of the documents.
 
   \subsection{Linking Between Files}
-    Linking between the outputted pages, for things like the list of includes,
-    was solved using \lstinline|Pathname|, another class available in the Ruby
+    Linking between the output pages, for things like the list of includes, was
+    solved using \lstinline|Pathname|, another class available in the Ruby
     standard library. \lstinline|Pathname| allows you to determine the relative
     path between two files; since I had ensured that the directory structure of
     my outputted data matched that of the input data, the relative path between
@@ -346,43 +410,38 @@ This is one example of a reason I chose Ruby in the in my proposal.
     statement, which can be a little complicated to understand, however it is
     much quicker than running three queries and producing the result in Ruby.
 
-\section{The Command-Line Interface}
-The command line interface ties all of the previous stages together, allowing
-for everything to be used together conveniently without requiring any Ruby
-knowledge on the part of the user.
+    Since all the files generated use exclusively relative paths to other files,
+    the output directory can be relocated to anywhere else and the files will
+    still correctly refer to one another. This is important, since documentation
+    will often be moved to other locations, such as a webserver, for later
+    viewing.
 
-Aside from making the process more convenient, the command line interface also
-provides easy manipulation of the options the program uses and performs the
-cleaning and the initial setup of the database.
+\section{Application Logic}
 
-Within this same section of code is also where the traversal of directories to
-find the files to be parsed takes place; Ruby's use of blocks allows the code
-for this to be written quickly and clearly. I wrote a small method,
-\lstinline|recurse|, that recurses down through the directories contained within
-a particular path, and yields the files contained in them back to its caller.
-This way of doing this made working through the files as convenient as working
-through the elements of an array, without having to store all of the filenames
-in an array first.
+The application logic coordinates the stages of program and ensures that the
+correct options are passed to them, it is also where the traversal of
+directories to find the files to be parsed takes place; Ruby's use of blocks
+allows the code for this to be written quickly and clearly. I wrote a small
+method, \lstinline|recurse|, that recurses down through the directories
+contained within a particular path, and yields the files contained in them back
+to its caller. This way of doing this made working through the files as
+convenient as working through the elements of an array, without having to store
+all of the filenames in an array first.
 
-% \begin{lstlisting}[language=ruby, gobble=2]
-%   # Compare:
+The application logic handles building documentation incrementally; this is done
+by calculating the MD5 checksum of each file before it is parsed, if it matches
+the existing entry for that file in the database then the file is unchanged
+since last time the program was run. This allows for the program to run much
+quicker, and not have to do any redundant parsing.
 
-%   ["test.h", "test.c", "another_file.txt"].each do |element|
-%     if parsers[File.extname(element)]
-%       # ...
-%     end
-%   end
+Finally, it also handles removing old entries from the database; when the
+program starts all files are marked as not existing, by setting the value of
+`exist' in the files table of the database to 0, then as each file is
+encountered its entry is updated to reflect that. After running over all the
+files, any that still have their `exist' value still set to 0 are determined to
+have been removed, and so their information in the database is deleted.
 
-%   # versus
-
-%   Dir.recurse(options[:directory]) do |file|
-%     if parsers[File.extname(file)]
-%       # ...
-%     end
-%   end
-% \end{lstlisting}
-
-The process goes as follows:
+The whole process goes as follows:
 
 \begin{center}
     \begin{tikzpicture}[node distance = 0.5cm, auto]
@@ -415,7 +474,16 @@ The process goes as follows:
         \path [line] (next) |- node[decision answer] {yes} (check);
         \path [line] (next) -- node[decision answer] {no} (delete);
     \end{tikzpicture}
-    \end{center}
+\end{center}
+
+\section{The Command-Line Interface}
+The command line interface ties all of the previous stages together, allowing
+for everything to be used together conveniently without requiring any Ruby
+knowledge on the part of the user.
+
+Aside from making the process more convenient, the command line interface also
+provides easy manipulation of the options the program uses and performs the
+cleaning and the initial setup of the database.
 
   \subsection{Option Parsing}
     Ruby has an extremely robust command-line option parser built into the
