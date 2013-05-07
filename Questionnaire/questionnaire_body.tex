@@ -1,8 +1,6 @@
-
 \hypersetup{
   linkcolor=black,
-  linkbordercolor={0 0 0},
-  colorlinks=false
+  linkbordercolor={0 0 0}
 }
 
 \def\LayoutTextField#1#2{\makebox[6em][l]{#1}\raisebox{-.5ex}{#2}}
@@ -15,136 +13,141 @@
 \makeatother
 \def\DefaultOptionsofRadio{print}
 
-  \begin{center}
+\newcommand{\quest}[3]{
+  \medskip
+  \begin{minipage}{\linewidth}
+    \noindent
+    #2
+    \medskip
+    \begin{adjustwidth}{-2cm}{-2cm}
+      \begin{center}
+        \ChoiceMenu[radio,name=#1]{}{#3}\\
+      \end{center}
+      \bigskip
+    \end{adjustwidth}
+    \end{minipage}
+  \bigskip
+}
+
+\begin{center}
     \bf Docula: Evaluation Questionnaire
-  \end{center}
+\end{center}
+The rest of this document contains some questions that will help me to
+evaluate the functionality of \verb|docula|, please take the time to fill them
+out; all non-multiple choice questions are optional.
+
+\begin{Form}
+  \quest{current}{
+    Do you currently use any documentation generation software? If so, please
+    state what you use.
+  }{Yes, No}
+  \medskip
+  \TextField[name=additionalcomment,width=\longline,
+    borderwidth=0,backgroundcolor={.85 .85 .85}]{}\\
+
+  \quest{current_easy}{
+    How do you find the current software to use?
+  }{Very Difficult, Difficult, Fair, Easy, Very Easy}
+
+  \quest{current_output}{
+    How would you rate the output of the software that you currently use?
+  }{(Lowest) 1, 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10}
+
+  \quest{expectations}{
+    What are your expectations of the software you are about to test?
+  }{(Lowest) 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10}
+
   Along with this questionnaire you should have received a .gem file; to allow
   for convenient use of docula whilst testing it functionality, please execute
   the following in a shell\footnote{Depending on your Ruby setup, this may need
   to be executed as root}:
   \begin{verbatim}
-    $ gem install --local docula-*.gem
+  $ gem install --local docula-*.gem
   \end{verbatim}
   This will properly install docula and its dependencies onto your system. You
   should then be able to use the \verb|docula| command to generate documentation
   for a particular directory. The resulting documentation should be available in
   the \verb|output/| directory by default.
 
-  When testing has completed, you can remove docula with:
+  In addition to the .gem file, you should also have received a .tar.gz file
+  containing some C source files; please extract this archive and navigate to the
+  created directory in a terminal, then run the command:
   \begin{verbatim}
-    $ gem uninstall docula
-    $ gem cleanup
+  $ docula
   \end{verbatim}
-  The second command will remove all the dependencies that were installed,
-  provided they are no longer required, leaving your system as it was before
-  testing.
+  \verb|docula| should now parse the files in the directory, you may see some
+  status messages as it executes; when \verb|docula| has finished running, you
+  will be able to view the generated documentation by opening
+  \verb|output/files.html| in a web browser.\\
 
-  To remove any traces of docula from a directory you used it in, simply:
-  \begin{verbatim}
-    $ rm -rf .docula/ output/
-  \end{verbatim}
+  \quest{success}{
+    Did docula successfully produce documentation?
+  }{Yes, No}
 
-  The rest of this document contains some questions that will help me to
-  evaluate the functionality of \verb|docula|, please take the time to fill them
-  out; all non-multiple choice questions are optional.
+  \quest{speed}{
+    How would you rate the speed with which docula completed its
+    execution?
+  }{Very Slow, Slow, Fine, Fast, Very Fast}
 
-  \newpage
+  Please review the generated documentation; \verb|files.html| will contain a list
+  of the files parsed, and clicking on one of the files will bring you to the
+  documentation for the contents of that file.
 
-  \begin{Form}
-    \noindent
-    Were you able to install the software using the instructions on the previous
-    page?
-    \medskip
-    \begin{center}
-      \ChoiceMenu[radio,name=install]{}{Yes, No}\\
-    \end{center}
+  Try to locate the function used to fetch the description of an audio channel,
+  using the documentation provided.\\
 
-    \bigskip
-    \noindent
-    \verb|docula| can generate documentation for C source \& header files, if
-    you were to run it on a directory containing these files, it should produce
-    documentation.\\
-    Were you able to generate successfully generate any documentation?
-    \medskip
-    \begin{center}
-      \ChoiceMenu[radio,name=generate]{}{Yes, No}\\
-    \end{center}
+  \quest{locate}{
+    Are you able to determine what the function returns in the event of an
+    error?
+  }{Yes, No}
 
-    \bigskip
-    \noindent
-    When running \verb|docula|, did any of your source files fail to be parsed?
-    If so, how many?
-    \medskip
-    \begin{center}
-      \ChoiceMenu[radio,name=generate]{}{None, A Few, A Lot, Most, All}\\
-    \end{center}
+  \quest{locate_speed}{
+    How quickly were you able to find the function?
+  }{Very Slowly, Slowly, As Expected, Quickly, Very Quickly}
 
-    \bigskip
-    \noindent
-    How did the speed compare to your usual documentation generation software?
-    \medskip
-    \begin{adjustwidth}{-2cm}{-2cm}
-    \begin{center}
-      \medskip
-      \ChoiceMenu[radio,name=speed]{}{Much Slower, Slower, About the Same,
-      Quicker, Much Quicker}\\
-      \bigskip
-    \end{center}
-    \end{adjustwidth}
+  \quest{navigate}{
+    In general, how did you find navigating the documentation?
+  }{Very Difficult, Difficult, Fine, Easy, Very Easy}
 
-    \bigskip
-    \noindent
-    \verb|docula| uses the checksums of files to determine whether documentation
-    needs to be regenerated when it is rerun. If you make a change to one or
-    two files in your directory, \verb|docula| should only need to re-parse
-    those files.\\
-    How did the speed compare to your usual documentation generation software on
-    the second execution?
-    \medskip
-    \begin{adjustwidth}{-2cm}{-2cm}
-    \begin{center}
-      \medskip
-      \ChoiceMenu[radio,name=speed2]{}{Much Slower, Slower, About the Same,
-      Quicker, Much Quicker}\\
-      \bigskip
-    \end{center}
-    \end{adjustwidth}
+  The file \verb|time.h| is lacking documentation, please add some documentation
+  to the two functions and then re-run \verb|docula|.\\
 
-    \bigskip
-    \noindent
-    How does the documentation produce compare with your usual documentation
-    generation software?
-    \medskip
-    \begin{adjustwidth}{-2cm}{-2cm}
-    \begin{center}
-      \medskip
-      \ChoiceMenu[radio,name=doccompare]{}{Much Better, Better, About the Same,
-      Worse, Much Worse}\\
-    \end{center}
-    \end{adjustwidth}
-    \medskip
-    Why?\\
-    \medskip
-    \TextField[name=doccomment,multiline=true,width=\longline,height=2in,
-      borderwidth=0,backgroundcolor={.85 .85 .85}]{}\\
+  \quest{changes}{
+    Were your changes successfully detected \& displayed?
+  }{Yes, No}
 
-    \bigskip
-    \noindent
-    Was there anything in particular that you felt was missing from the
-    documentation?\\
-    \medskip
-    \TextField[name=missingcomment,multiline=true,width=\longline,height=2in,
-      borderwidth=0,backgroundcolor={.85 .85 .85}]{}\\
+  \quest{appear}{
+    Did they appear as you would have expected?
+  }{Yes, No}
 
-    \bigskip
-    \noindent
-    Additional Comments\\
-    \medskip
-    \TextField[name=additionalcomment,multiline=true,width=\longline,height=2in,
-      borderwidth=0,backgroundcolor={.85 .85 .85}]{}\\
-  \end{Form}
+  \quest{compare_speed}{
+    How did the speed of execution compare with the last time you ran docula?
+  }{Much Slower, Slower, About The Same, Quicker, Much Quicker}
 
-  \begin{center}
-    \bigskip\hrule\bigskip
-    \emph{Thank you for taking the time to complete this questionnaire.}
-  \end{center}
+  \quest{appearance}{
+    How would you rate the appearance \& layout of the documentation?
+  }{Terrible, Poor, Average, Good, Excellent}
+
+  \quest{compare_expect}{
+    How did the software compare to your expectations?
+  }{Much Worse, Worse, About Right, Better, Much Better}
+
+  \noindent
+  Was there anything in particular that you felt was missing from the
+  documentation?\\
+  \medskip
+  \TextField[name=missingcomment,multiline=true,width=\longline,height=1.75in,
+    borderwidth=0,backgroundcolor={.85 .85 .85}]{}\\
+
+  \bigskip
+  \noindent
+  Additional Comments\\
+  \medskip
+  \TextField[name=additionalcomment,multiline=true,width=\longline,height=2in,
+    borderwidth=0,backgroundcolor={.85 .85 .85}]{}\\
+\end{Form}
+
+\begin{center}
+  \bigskip\hrule\bigskip
+  \emph{Thank you for taking the time to complete this questionnaire.}
+\end{center}
