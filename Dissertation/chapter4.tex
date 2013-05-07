@@ -1,1 +1,77 @@
+% This is where Assessors will be looking for signs of success and for evidence
+% of thorough and systematic testing. Sample output, tables of timings and
+% photographs of workstation screens, oscilloscope traces or circuit boards may
+% be included.
+
+% As with code, voluminous examples of sample output are usually best left to
+% appendices or omitted altogether.
+
+% There are some obvious questions which this chapter will address. How many of
+% the original goals were achieved? Were they proved to have been achieved? Did
+% the program/hardware/theory really work?
+
+% Assessors are well aware that large programs will very likely include some
+% residual bugs. It should always be possible to demonstrate that a program
+% works in simple cases and it is instructive to demonstrate how close it is to
+% working in a really ambitious case.
+
 \chapter{Evaluation}
+
+\section{Speed Testing}
+An important aspect of this project is speed, this is because users will not
+want to wait excessive lengths of time for the tool to complete, particularly if
+it is expected to be used incrementally, as this is. In order to test this, I
+ran the software over several open-source projects and measured their runtime;
+as a comparision, I also used doxygen on the same projects. As my project stores
+information from files so that future runs are quicker, I ran the tool a second
+time over the source trees to examine how much effect this has; doxygen does not
+do any such storing, and so only one execution was required per project.
+
+In the interests of ensuring that the measurements were correct, this process
+was performed several times for each project, and the results were averaged. In
+each case, results were pretty consistent.
+
+Since the software failed on some source files due to problems with my parser,
+not all files were successfully parsed; to account for this, I decided to
+estimate the total time the software would have taken. When the parser fails,
+the line on which it failed can be retrieved, I used this to determine the
+fraction of the file that was successfully parsed and estimated the time that
+would be taken. This allows for a fairer comparison with doxygen.
+
+\noindent\makebox[\textwidth]{%
+  \includegraphics[width=160mm]{Graphs/timings.pdf}
+}
+
+Above is a graph comparing the execution times of my project \& doxygen, the
+bars for my software are broken down into three parts: the actual runtime,
+projected runtime, and the time for a subsequent run.
+
+These results demonstrate that doxygen is generally faster than my software on
+the first run, even without accounting for the failed files; however, in all but
+one test, my software out-performs doxygen on subsequent runs. These results are
+fairly in-line with my expectations: doxygen is written in C++ and therefore has
+less of an overhead compared to my solution, not to mention that its developers
+have had much longer to tune the performance of their software. I had also
+expected that my use of a database would allow for a dramatic increase in speed,
+and I am pleased to see that this was the case.
+
+  \subsection{Profiling}
+  In addition to running the above tests, I also opted to profile the code to
+  try and work out what sections were causing the high execution times. I had
+  expected to find that the I/O to the database on disk was the cause of it, but
+  the results of profiling demonstrated that the parser was in fact the slowest
+  component; in particular, the sheer number of classes that Treetop
+  instantiated caused calls to \lstinline|Class#new| and
+  \lstinline|Kernel#extend| to take a significant proportion ($\sim$8\%) of the
+  total execution time!
+
+  Upon further investigation I discovered why Treetop was instantiating so
+  many classes, it would appear that any match to part of a defined rule
+  creates a \lstinline|SyntaxNode|. The rules for defining comments illustrate
+  this problem well: part of its definition contains ``\lstinline|( !EOL .)*|''
+  which matches any character other than a newline, causing a
+  \lstinline|SyntaxNode| to be created for \emph{every character in the
+  comment}. Fortunately, this means that the parser's performance could be
+  improved with better regular expressions.
+
+
