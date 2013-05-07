@@ -137,7 +137,10 @@ Girton College \\
 \cleardoublepage
 \include{Dissertation/declaration}
 
+\begingroup
+\hypersetup{linkcolor=black}
 \tableofcontents
+\endgroup
 
 \mainmatter % book mode only
 \pagestyle{fancy}
@@ -151,6 +154,8 @@ Girton College \\
 \printbibliography
 
 \begin{appendices}
+\chapter{Results}
+\include{Graphs/results}
 \include{Dissertation/comment_appendix}
 \chapter{Questionnaire}
 \include{Questionnaire/questionnaire_body}
