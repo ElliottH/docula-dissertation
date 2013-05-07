@@ -200,6 +200,9 @@ after all the files have been parsed.
     different languages, provided that the nodes in that tree expose the same
     methods.
 
+    When extracting the data from the parse tree, I ended up with two hashes
+    describing a function: one using the details from the function definition
+    itself, and the other from the documentation string associated with it.
     Since some functions in the source being parsed may only be partially
     documented, I needed to account for this in my code to ensure that the
     resulting data was consistent; in particular, if a function is documented
@@ -241,6 +244,11 @@ after all the files have been parsed.
       D = [{a => 1, d => 4}, {b => 2}, {c => 3, f => 6}]
     \end{code}
 
+    The arrays A \& B represent the arguments from the function definitions
+    and the arguments from the documentation string, respectively; D
+    represents the combined information returned, C is an intermediate step,
+    shown here for clarity.
+
       \subsubsection{Post-processing}
         Once the data for all files in the directory has been added to the
         database, some extra processing takes place to resolve which files
@@ -261,6 +269,7 @@ after all the files have been parsed.
         that this was not a valid solution in the time available.
 
   \subsection{Storage}
+
     The sqlite3 Ruby library made interacting with my database very natural, SQL
     statements are executed with a method that takes a query string and results
     are returned as a \lstinline|ResultSet|, which can be enumerated just like
@@ -275,49 +284,73 @@ after all the files have been parsed.
       end
     \end{code}
 
-    \textbf{TODO: DB Schema stuffs!}
+    Since everything parsed by my software originally comes from one of a set
+    of files, it was natural that my database revolved around the same
+    concept; as such, all the information stored in my database is linked back
+    to the file it came from. The diagram below shows the layout of my
+    database, with the arrows representing the links between tables with foreign
+    keys; all bar two of the tables reference the ID of the file they are
+    contained in, `arguments' \& `elements' refer to the ID of the structure
+    they were contained in, which in turn refers to the file.
 
-    % These four lines above are sufficient to open a database called `db.sqlite'
-    % in the current directory, query for all the entries stored in the `files'
-    % table and print out information for each. The way that sqlite3 functioned
-    % allowed me to write natural code with it, and didn't get in the way of
-    % expressing things how I wanted to. sqlite3 also allows statements to be
-    % prepared and executed multiple times, this reduces the time spent creating
-    % and destroying objects, and also allows for parameters to be bound to
-    % placeholders. For example:
+    \noindent\makebox[\textwidth]{%
+      \includegraphics[width=160mm]{db.png}
+    }
 
-    % \begin{code}[language=ruby, gobble=6]
-    %   statement = db.prepare("SELECT * FROM files WHERE id = ?")
-    %   file1 = statement.execute(1)
-    %   file99 = statement.execute(99)
-    % \end{code}
+    Having foreign keys running through my database like this ensures that
+    nothing can be inserted with a non-existent ID, thereby reducing insertion
+    anomalies, but it also gained me a second advantage: when defining foreign
+    keys in SQL, it is possible to design what happens when a particular entry
+    is deleted. I specified in my table creation statements that when the
+    entry a particular key references is deleted, the entry referencing it is
+    also deleted; since every table in my database has a foreign key, a
+    deletion of a file in the `files' table cascades all the way through,
+    removing all the data about that file. This ensures that there is never
+    any stale data kept in the database, which will improve run time by
+    keeping the data sets smaller.
 
-    % When the statement prepared, the question mark becomes a placeholder for an
-    % argument to be passed into later on; when executed, the statement works just
-    % like the previous example. I used these prepared statements heavily
-    % throughout my code, since I did a lot of looping and executing queries
-    % within those loops, it removed excess object creation and made the code
-    % clearer by allowing me to move the long SQL queries out of the loops.
+    This is preferable to deleting anything manually, as it removes the
+    chances for error; it also eliminates the time it would take to query each
+    table in the database and work out what to remove.
 
-    \subsubsection{Database Structure}
-      The data stored in the database was split across several tables and tied
-      together using foreign keys; all bar one of the tables reference the ID of
-      the file they are contained in. The exception to this being the
-      `arguments' table, which references the ID of the function they are found
-      in instead, since the `functions' table already contains that information,
-      so storing it again would be redundant.
+    When a source file is updated, and the software re-run, the hash of the file
+    no longer matches the one stored in the database; at this point the entry
+    from the files table is deleted, thereby removing all the other data
+    relating to that file from the database due to the cascading deletion. The
+    details about the file are then inserted into the database as before. This
+    approach is much simpler than the alternative, which would involve
+    updating some entries, inserting others and removing out-dated
+    information. In addition to being more complicated, this method would also
+    be more error-prone; since leaving behind stale information, such as an
+    entry in the arguments table, could lead to the function being displayed
+    in the output as having extra arguments.
 
-      Having foreign keys running through my database like this ensures that
-      nothing can be inserted with a non-existent ID, thereby reducing insertion
-      anomalies, but it also gained me a second advantage: when defining foreign
-      keys in SQL, it is possible to design what happens when a particular entry
-      is deleted. I specified in my table creation statements that when the
-      entry a particular key references is deleted, the entry referencing it is
-      also deleted; since every table in my database has a foreign key, a
-      deletion of a file in the `files' table cascades all the way through,
-      removing all the data about that file. This ensures that there is never
-      any stale data kept in the database, which will improve run time by
-      keeping the data sets smaller.
+    The structure of my database made it easy to define powerful queries in
+    SQL, that gave me the data I needed much easier than if I'd extracted all
+    the data separately and combined it in Ruby. Database engines are also
+    much more optimised towards this type of data manipulation that a normal
+    programming language would be, allowing it to execute quicker than if I'd
+    done it in Ruby. I could have made my data retrieval faster by creating
+    indices on some of the columns that were commonly queried against in the
+    database; however the number of insertions into the database is much
+    higher than the queries against the data, so the end result would have
+    been slower due to the insertion overhead with indices.
+
+    \begin{code}[language=sql, gobble=6]
+      SELECT types.*, files.path FROM
+       (SELECT id, file_id, name, 'typedef' FROM typedefs WHERE typedefs.name = ?
+        UNION ALL
+        SELECT id, file_id, name, 'define' FROM defines WHERE defines.name = ?
+       ) AS 'types' INNER JOIN files ON types.file_id = files.id
+    \end{code}
+
+    This SQL statement looks up a type in the \lstinline|typedef| \&
+    \lstinline|define| tables, unioning the two result sets together to ensure
+    that we get results from either, and then performs an inner join of these
+    results against the files table to get the information on the file that the
+    typedef or define was found in. This results in a rather large SQL
+    statement, which can be a little complicated to understand, however it is
+    much quicker than running three queries and producing the result in Ruby.
 
 \section{Generating the Output}
 
@@ -380,6 +413,10 @@ output directory, if there is not one already present, a default one is created.
 All important HTML elements in the output files have IDs or classes associated
 with them, allowing for convenient styling of the documents.
 
+\noindent\makebox[\textwidth]{%
+      \includegraphics[width=160mm]{output.png}
+}
+
   \subsection{Linking Between Files}
     Linking between the output pages, for things like the list of includes, was
     solved using \lstinline|Pathname|, another class available in the Ruby
@@ -393,22 +430,6 @@ with them, allowing for convenient styling of the documents.
     was originally declared in; this was done with \lstinline|Pathname| as
     above, and a \lstinline|type| method in \lstinline|Output| that looks up
     types in the SQLite database.
-
-    \begin{code}[language=sql, gobble=6]
-      SELECT types.*, files.path FROM
-       (SELECT id, file_id, name, 'typedef' FROM typedefs WHERE typedefs.name = ?
-        UNION ALL
-        SELECT id, file_id, name, 'define' FROM defines WHERE defines.name = ?
-       ) AS 'types' INNER JOIN files ON types.file_id = files.id
-    \end{code}
-
-    This SQL statement looks up a type in the \lstinline|typedef| \&
-    \lstinline|define| tables, unioning the two result sets together to ensure
-    that we get results from either, and then performs an inner join of these
-    results against the files table to get the information on the file that the
-    typedef or define was found in. This results in a rather large SQL
-    statement, which can be a little complicated to understand, however it is
-    much quicker than running three queries and producing the result in Ruby.
 
     Since all the files generated use exclusively relative paths to other files,
     the output directory can be relocated to anywhere else and the files will
