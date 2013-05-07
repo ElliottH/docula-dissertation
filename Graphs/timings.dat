@@ -1,0 +1,28 @@
+# DirectFB-1.6.3
+#docula	36.583	289.111	322.320
+docula 36.583	252.528	69.792
+doxygen	17.410
+
+
+# freetype-2.4.11
+#docula	1.738	31.723	43.394
+docula 1.738	29.985	13.409
+doxygen	4.621
+
+
+# ffmpeg
+#docula	36.629	213.540	250.371
+docula	36.629	176.911	73.46
+doxygen	50.366
+
+
+# icu
+#docula	7.491	83.869	100.566
+docula	7.491	76.378	24.188
+doxygen	58.007
+
+
+# VTK5.10.1
+#docula	68.028	391.183	502.976
+docula	68.028	323.155	179.821
+doxygen	362.26
