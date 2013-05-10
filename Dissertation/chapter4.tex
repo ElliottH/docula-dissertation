@@ -16,6 +16,8 @@
 % working in a really ambitious case.
 
 \chapter{Evaluation}
+\emph{Full-size versions of all graphs in this section, and their corresponding
+data, can be found in the `Results' chapter of the Appendix.}
 
 \section{Speed Testing}
 An important aspect of this project is speed, this is because users will not
@@ -74,4 +76,59 @@ and I am pleased to see that this was the case.
   comment}. Fortunately, this means that the parser's performance could be
   improved with better regular expressions.
 
+\section{Correctness Testing}
 
+In order to assess whether my software was successfully displaying the
+documentation that it had extracted from the source code it had been run on, I
+needed to check the generated HTML documents; I opted to do this by a
+semi-automated approach, since doing it entirely manually would have taken an
+extremely long time.
+
+To expedite this process, I wrote some code that counted the number of
+\lstinline|/**|
+in a file and compared it to the number of documentation strings mentioned in
+the HTML output. For any file that these two numbers did not match, I
+investigated what was occurring.
+
+I noticed quickly that there was a particular type that was being consistently
+ignored, which were the ones used by doxygen to denote the beginning \& end of a
+group of definitions that are linked; these comments are of the form
+\lstinline|/** @{ */| and \lstinline|/** @} */| respectively. These comments
+do not generally contain any actual documentation, and in the cases they did
+it was successfully extracted, so I accounted for the occurrence of these in
+code I was using to verify the documentation. Once I removed these false
+positives, the results looked much more positive, as can be seen in the graph
+below.
+
+\noindent\makebox[\textwidth]{%
+  \includegraphics[width=160mm]{Graphs/correct.pdf}
+}
+
+Here, the graph is broken down into three parts, the documentation that was
+successfully displayed, those that contained grouping information \& the total
+number of documentation strings in a file. The graph shows that the majority
+of the documentation was successfully displayed.
+
+Having analysed the files that did not have the correct amount of information
+displayed in the output, I noticed that the failures fell into two categories:
+\begin{itemize}
+  \item I am failing to display the documentation that is contained in the
+    bodies of structs, and similar data structures, which is causing the large
+    majority of the discrepancies in the graph.
+    \begin{itemize}
+      \item In some situations, my code appears to mistake a typedef
+      containing one of these data structures for a normal typedef, and
+      therefore doesn't print them correctly at all.
+    \end{itemize}
+  \item Documentation comments placed before items that I do not consider for
+    outputting at all, such as \lstinline|#ifdef| statements. doxygen's
+    solution to this is to associate the documentation with the related
+    \lstinline|#define|.
+\end{itemize}
+
+Aside from these two situations, it appears that if a file is successfully
+parsed, all of its documentation will make it into the HTML documents. Both of
+the above failures are due to minor oversights in my code, rather than glaring
+problems with implementation decisions.
+
+\section{Functionality Testing}
