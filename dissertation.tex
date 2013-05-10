@@ -12,6 +12,9 @@
 \usepackage{changepage}
 \usepackage{etoolbox}
 
+\usepackage{longtable}
+\usepackage{pdfpages}
+
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,positioning}
 
@@ -151,16 +154,21 @@ Girton College \\
 \include{Dissertation/chapter4}
 \include{Dissertation/chapter5}
 
+%TC:ignore
 \printbibliography
 
 \begin{appendices}
 \chapter{Results}
 \include{Graphs/results}
+
 \include{Dissertation/comment_appendix}
+
 \chapter{Questionnaire}
 \include{Questionnaire/questionnaire_body}
+
 \chapter{Project Proposal}
 \include{Proposal/proposal}
 \end{appendices}
+%TC:endignore
 
 \end{document}
