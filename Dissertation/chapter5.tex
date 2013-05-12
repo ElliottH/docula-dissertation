@@ -1,1 +1,39 @@
+% This chapter is likely to be very short and it may well refer back to the
+% Introduction. It might properly explain how you would have planned the project
+% if starting again with the benefit of hindsight.
+
 \chapter{Conclusion}
+I have successfully produced software capable of transforming source code, using
+appropriately-styled comments, into human-readable documentation. The software
+does not completely parse the C language correctly, mainly due to difficulties
+in parsing preprocessor macros; given more time, this should be fairly easy to
+fix. As the results in the previous chapter show, the software parses source
+trees faster on subsequent runs than doxygen, due to the use of persistent
+storage.
+
+Whilst the software I have produced does indeed produce documentation, it does
+not address the shortcomings that I identified in existing documentation
+generation software, namely that they do not allow the developer to fully
+describe ``the design decisions that led to this implementation nor the
+considerations that drove them''. Due in part to time constraints, difficulties
+\& hold-ups in the implementation process, the software I have produced only
+goes as far as existing software does in displaying documentation, however I
+believe that I have designed my system in a modular enough way that these things
+could be added in the future without any significant re-designs taking place.
+
+I originally opted to use Treetop for creating the parser because it allowed me
+to implement it in a way that was logical and familiar to me, with hindsight, it
+would perhaps have been better (at least, in the time that was available to me)
+to make use of an infrastructure such as LLVM\cite{website:llvm} to facilitate
+the parsing. This would have also given me the added advantage of being able to
+perform some static analysis on the code, potentially allowing for the generated
+documentation to display information about the usage of functions. The downside
+to this is that LLVM would only be usable with languages that have a front-end
+implemented for it, whereas Treetop could be used to parse any language. With
+hindsight, I would have at least considered using LLVM instead of, or in
+combination with, Treetop to do my parsing.
+
+Overall I believe that my project was a modest success, despite not doing
+everything I set out to do, it does go a long way to being a competent
+documentation generator; given a little more time, I believe this project could
+have exceeded its original goals.
