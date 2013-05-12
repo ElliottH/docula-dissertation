@@ -1,4 +1,5 @@
 \section{Speed Testing}
+\begin{center}
 \begin{tabular}{l r || c | c | c}
   Source   & Software & Second Run & Actual Time & Projected Time \\
   \hline
@@ -17,6 +18,7 @@
   VTK      &          & 68.028     & 391.183     & 502.976        \\
            &          &            & 362.26      &                \\
 \end{tabular}
+\end{center}
 
 \includepdf[pages={1},angle=90]{Graphs/timings.pdf}
 
@@ -79,3 +81,38 @@
 \end{longtable}
 
 \includepdf[pages={1},angle=90]{Graphs/correct.pdf}
+
+\section{Functionality Testing}
+\emph{The questionnaire used to survey users can be found later in the
+Appendix}
+
+\begin{center}
+\begin{tabular}{l || c | c | c | c | c | c | c | c | c | c | c | c | c | c}
+     & Q1 & Q2 & Q3 & Q4 & Q5 & Q6 & Q7 & Q8 & Q9 & Q10 & Q11 & Q12 & Q13 & Q14 \\
+\hline
+mjc  & Y  & 3  & 7  & 6  & Y  & 2  & Y  & 3  & 4  & Y   & Y   & 5   & 4   & 3   \\
+tibs & Y  & 4  & 7  & 5  & Y  & 3  & N  & 2  & 3  & Y   & Y   & 2   & 4   & 3   \\
+\end{tabular}
+\end{center}
+
+\begin{landscape}
+\begin{center}
+\begin{tabular}{l || p{3cm} | p{4cm} | p{10cm}}
+       & Current S/W & Missing Features & Additional Comments \\
+\hline
+  mjc  & Doxygen, Sandcastle, Javadoc & Perhaps some search functionality? &
+    Maybe include frames to allow easy navigation within the hierarchy at any
+    scroll point in the document. \\
+\hline
+  tibs & restructuredtext / docutils & &
+    Saying ``Failed to parse rational.h with CSimpleParser!'' makes it sound
+    like a SERIOUS ERROR (keying on the word ``Failed'' and the exclamation
+    mark). Leaving off the exclamation mark and replacing Failed with (for
+    instance) ``Unable'' might be better. Or maybe list what *was* parsed
+    instead, and ignore those not...
+
+    It feels worrying that there are lots of Failed messages - there's no
+    scope to give one a feeling if this is a problem or not. \\
+\end{tabular}
+\end{center}
+\end{landscape}
