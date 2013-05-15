@@ -93,22 +93,24 @@ on subsequent runs, and I am pleased to see that this was the case.
   how long they take to execute and how many times they are called. When the
   code finishes executing, profile outputs a table of information like so:
 
-  \begin{verbatim}[gobble=2]
-    %   cumulative   self              self     total
-   time   seconds   seconds    calls  ms/call  ms/call  name
-   12.49    25.41     25.41  1181040     0.02     0.03  Treetop::Runtime::CompiledParser#has_terminal?
-   10.45    46.67     21.26  1457515     0.01     0.03  Treetop::Runtime::CompiledParser#instantiate_node
-    8.51    63.98     17.31   842122     0.02     0.03  Treetop::Runtime::CompiledParser#terminal_parse_failure
-    6.79    77.80     13.82   119589     0.12     1.73  CSimple#_nt_function_body_item
-    6.33    90.67     12.87  1478676     0.01     0.01  Class#new
-    5.72   102.30     11.63   140154     0.08     0.60  CSimple#_nt_comment_contents
-    4.44   111.34      9.04   217330     0.04     0.10  CSimple#_nt_end_comment
-    3.75   118.96      7.62   470575     0.02     0.02  Kernel#extend
-    3.51   126.11      7.15    78088     0.09     0.74  CSimple#_nt_docstring_contents
-    2.82   131.85      5.74    66223     0.09     1.49  CSimple#_nt_directive_line
-  # [rest of output ommitted]
-
+\begingroup
+    \fontsize{8pt}{12pt}\selectfont
+    \begin{verbatim}
+ %   cumulative   self              self     total
+time   seconds   seconds    calls  ms/call  ms/call  name
+12.49    25.41     25.41  1181040     0.02     0.03  Treetop::Runtime::CompiledParser#has_terminal?
+10.45    46.67     21.26  1457515     0.01     0.03  Treetop::Runtime::CompiledParser#instantiate_node
+ 8.51    63.98     17.31   842122     0.02     0.03  Treetop::Runtime::CompiledParser#terminal_parse_failure
+ 6.79    77.80     13.82   119589     0.12     1.73  CSimple#_nt_function_body_item
+ 6.33    90.67     12.87  1478676     0.01     0.01  Class#new
+ 5.72   102.30     11.63   140154     0.08     0.60  CSimple#_nt_comment_contents
+ 4.44   111.34      9.04   217330     0.04     0.10  CSimple#_nt_end_comment
+ 3.75   118.96      7.62   470575     0.02     0.02  Kernel#extend
+ 3.51   126.11      7.15    78088     0.09     0.74  CSimple#_nt_docstring_contents
+ 2.82   131.85      5.74    66223     0.09     1.49  CSimple#_nt_directive_line
+# [rest of output ommitted]
   \end{verbatim}
+\endgroup
 
   I profiled my software on libavutil, which is part of ffmpeg; I selected
   this because it was fairly small, and profile causes the code to execute
