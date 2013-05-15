@@ -173,3 +173,71 @@ the above failures are due to minor oversights in my code, rather than glaring
 problems with implementation decisions.
 
 \section{Functionality Testing}
+This section of the testing was to assess whether the software created
+produces useful information for the user; this was done using a questionnaire,
+which asked users to complete some tasks using the software, some source code
+and the generated documentation.
+
+I deliberately chose to use a specific set of source files for the purposes of
+the questionnaire so that the users' experiences are comparable with one
+another, and so that I could ask well-defined questions in the questionnaire.
+The questionnaire tasked the users with finding out information about a
+function, adding their own documentation to one file and asking them about how
+they found the process.
+
+In the lookup task, two-thirds of people successfully found the information
+describing what was returned by a particular function in the event of an
+error. Interestingly, the same two users that were unable to find the function
+also complained of problems with the files listing not being sorted; this
+appears to be due to the \lstinline|Dir.foreach| method, since different Ruby
+implementations appear to return this data sorted in different ways (or not at
+all). I never encountered this problem as I did most of my development on an OS
+X machine, and the ordering of files returned is consistently alphabetical.
+
+83\% of the users successfully had the information they added to a file
+successfully appear in the generated documentation; of those users, only 40\%
+said that the documentation appeared as expected, with most commenting that
+\lstinline|@param| annotations were not displayed. Unfortunately, this appears
+to be due to an undetermined bug, which cannot be produced on my end, and was
+not experienced by all users. Further investigation into the cause of this
+would be needed if development were to continue.
+
+Oddly, one-third of people surveyed did not experience any speed-up on the
+second execution of the software, whilst everyone else noticed a significant
+difference. Given that my testing has already demonstrated that there is a
+consistent speed up, and that the majority of users encountered this also, I
+believe that this was due to other operations taking place on the users'
+machines whilst the second execution was taking place. Additionally, the
+set of files used for testing here was much smaller than the sets used in my
+other testing, so the speed-up may have gone unnoticed due to short execution
+times on both executions of the software.
+
+The results of these questionnaires show that, whilst people were generally able
+to use the software and the output documentation, there were some usability
+issues involved. The majority of the people surveyed commented that a search
+would have been extremely useful; I would very much have liked to implement
+this, without a server-side component, however, it would have been extremely
+difficult to produce a search that worked in the browser. Navigation between
+files was also cited as a problem, which could be improved simply by having
+links back to the files listing rather than relying on the back and forward
+navigation available in the browser.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

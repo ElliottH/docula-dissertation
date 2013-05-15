@@ -88,31 +88,95 @@ Appendix}
 
 \begin{center}
 \begin{tabular}{l || c | c | c | c | c | c | c | c | c | c | c | c | c | c}
-     & Q1 & Q2 & Q3 & Q4 & Q5 & Q6 & Q7 & Q8 & Q9 & Q10 & Q11 & Q12 & Q13 & Q14 \\
+   & Q1 & Q2 & Q3 & Q4 & Q5 & Q6 & Q7 & Q8 & Q9 & Q10 & Q11 & Q12 & Q13 & Q14 \\
 \hline
-mjc  & Y  & 3  & 7  & 6  & Y  & 2  & Y  & 3  & 4  & Y   & Y   & 5   & 4   & 3   \\
-tibs & Y  & 4  & 7  & 5  & Y  & 3  & N  & 2  & 3  & Y   & Y   & 2   & 4   & 3   \\
+\#1 & Y  & 3  & 7  & 6  & Y  & 2  & Y  & 3  & 4  & Y   & Y   & 5   & 4   & 3  \\
+\#2 & Y  & 4  & 7  & 5  & Y  & 3  & N  & 2  & 3  & Y   & Y   & 2   & 4   & 3  \\
+\#3 & N  &    &    & 7  & N  & 3  & Y  & 3  & 4  & N   & N   & 3   & 4   & 2  \\
+\#4 & Y  & 3  & 8  &    & Y  & 1  & N  &    & 2  & Y   & N   & 5   & 3   & 3  \\
+\#5 & Y  & 3  & 6  & 6  & Y  & 2  & Y  & 3  & 2  & Y   & N   & 4   & 3   & 3  \\
+\#6 & Y  & 2  & 8  & 8  & Y  & 3  & Y  & 5  & 5  & Y   & N   & 5   & 5   & 4  \\
 \end{tabular}
 \end{center}
 
 \begin{landscape}
 \begin{center}
-\begin{tabular}{l || p{3cm} | p{4cm} | p{10cm}}
-       & Current S/W & Missing Features & Additional Comments \\
-\hline
-  mjc  & Doxygen, Sandcastle, Javadoc & Perhaps some search functionality? &
-    Maybe include frames to allow easy navigation within the hierarchy at any
-    scroll point in the document. \\
-\hline
-  tibs & restructuredtext / docutils & &
-    Saying ``Failed to parse rational.h with CSimpleParser!'' makes it sound
-    like a SERIOUS ERROR (keying on the word ``Failed'' and the exclamation
-    mark). Leaving off the exclamation mark and replacing Failed with (for
-    instance) ``Unable'' might be better. Or maybe list what *was* parsed
-    instead, and ignore those not...
+\begin{longtable}{l || p{3cm} | p{7cm} | p{8cm}}
+  \multicolumn{1}{c||}{} & \multicolumn{1}{c|}{Current S/W} & \multicolumn{1}{c|}{Missing Features} & \multicolumn{1}{c}{Additional Comments} \\
+  \hline
+  \endhead
 
-    It feels worrying that there are lots of Failed messages - there's no
-    scope to give one a feeling if this is a problem or not. \\
-\end{tabular}
+  \hline \multicolumn{4}{r}{{Continued on next page}} \\
+  \endfoot
+
+  \endlastfoot
+  \#1
+    & Doxygen, Sandcastle, Javadoc
+    & Perhaps some search functionality?
+    & Maybe include frames to allow easy navigation within the hierarchy at any
+      scroll point in the document. \\
+\hline
+  \#2
+    & restructuredtext / docutils
+    &
+    & Saying ``Failed to parse rational.h with CSimpleParser!'' makes it sound
+      like a SERIOUS ERROR (keying on the word ``Failed'' and the exclamation
+      mark). Leaving off the exclamation mark and replacing Failed with (for
+      instance) ``Unable'' might be better. Or maybe list what *was* parsed
+      instead, and ignore those not...
+
+      It feels worrying that there are lots of Failed messages - there's no
+      scope to give one a feeling if this is a problem or not. \\
+\hline
+  \#3
+    & The files on the top-level page don't appear to be ordered in an obvious
+      manner?
+    & It would be useful to have function names emphasized in the "Function
+      Documentation" section.
+    & Docula failed to recognise function arguments split over several lines and
+      @param tags. Otherwise the operation was fine. \\
+\hline
+  \#4
+    & doxygen
+    & Any sort of navigation between files.
+    & My parameter documentation didn't appear after editing time.h, the rest
+      did. \\
+\hline
+  \#5
+    & doxygen
+    & Finding functions was a matter of guesswork, there was no automated help.
+      This is probably an unsolveable problem if your front-end is a browser.
+      No links back to files.html.
+      Several files didn't produce anything, and docula gave no clue why. It did
+      spam the output a lot with "Failed to parse xxx.x with CSimpleParser!"
+      which is uninformative to a user and not configence-inspiring.
+
+      files.html doesn't list files in alphabetical order. Or any particularly
+      obvious order for that matter, even directory hierarchies are only
+      reflected in the filename. This makes finding things harder.
+    & docula's own documentation is ironically lacking. There is no man page,
+      which is fair enough, and if gems come with documentation I have no idea
+      how to find it. More seriously, giving docula an invalid "-?" option on
+      the command line does not produce a syntax message, just a ruby traceback.
+
+      Personally I'd like a "vicious bastard" mode that errors messily if the
+      documentation is incomplete.
+
+      It feels like docula is following the same path as doxygen of being
+      focused on functions, but offering very limited help with structure. My
+      big problems are all structure-related, the lack of documentation about
+      how things fit together, and docula doesn't seem to provide any support
+      for that. \\
+\hline
+  \#6
+    & doxygen
+    & Being able to search through the documentation, other than just the
+      current page.
+    & When I added comments to time.h, I couldn't get it to generate any text
+      about the argument to the sleep function.
+
+      I like the different background shadings used to differentiate entries in
+      a section. \\
+\end{longtable}
 \end{center}
 \end{landscape}
