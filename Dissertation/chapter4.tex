@@ -19,15 +19,26 @@
 \emph{Full-size versions of all graphs in this section, and their corresponding
 data, can be found in the `Results' chapter of the Appendix.}
 
+For the tests below, I used the source code for several open-source projects
+that are available online; some of these were found on doxygen's website as
+examples of projects that contain doxygen-style documentation, others are
+projects that I have encountered or worked with in the past that I knew to
+contain documentation.
+
+I will be using these source bases to evaluate the speed with which my software
+executes, whether my software correctly outputs the documentation obtained and
+how people find my software to use.
+
 \section{Speed Testing}
-An important aspect of this project is speed, this is because users will not
+An important aspect of this project is speed. This is because users will not
 want to wait excessive lengths of time for the tool to complete, particularly if
 it is expected to be used incrementally, as this is. In order to test this, I
 ran the software over several open-source projects and measured their runtime;
-as a comparision, I also used doxygen on the same projects. As my project stores
-information from files so that future runs are quicker, I ran the tool a second
-time over the source trees to examine how much effect this has; doxygen does not
-do any such storing, and so only one execution was required per project.
+as a comparision, I also used doxygen on the same projects. As my project caches
+from files in the database so that future runs are quicker, I ran the tool a
+second time over the source trees to examine how much effect this has; doxygen
+does not do any such storing, and so only one execution was required per
+project.
 
 In the interests of ensuring that the measurements were correct, this process
 was performed several times for each project, and the results were averaged. In
@@ -44,7 +55,7 @@ would be taken. This allows for a fairer comparison with doxygen.
   \includegraphics[width=160mm]{Graphs/timings.pdf}
 }
 
-Above is a graph comparing the execution times of my project \& doxygen, the
+Above is a graph comparing the execution times of my project and doxygen, the
 bars for my software are broken down into three parts: the actual runtime,
 projected runtime, and the time for a subsequent run.
 
@@ -54,17 +65,17 @@ one test, my software out-performs doxygen on subsequent runs. These results are
 fairly in-line with my expectations: doxygen is written in C++ and therefore has
 less of an overhead compared to my solution, not to mention that its developers
 have had much longer to tune the performance of their software. I had also
-expected that my use of a database would allow for a dramatic increase in speed,
-and I am pleased to see that this was the case.
+expected that my use of a database would allow for a dramatic increase in speed
+on subsequent runs, and I am pleased to see that this was the case.
 
   \subsection{Profiling}
   In addition to running the above tests, I also opted to profile the code to
   try and work out what sections were causing the high execution times. I had
-  expected to find that the I/O to the database on disk was the cause of it, but
+  expected to find that the I/O to the database on disk was the cause, but
   the results of profiling demonstrated that the parser was in fact the slowest
   component; in particular, the sheer number of classes that Treetop
   instantiated caused calls to \lstinline|Class#new| and
-  \lstinline|Kernel#extend| to take a significant proportion ($\sim$8\%) of the
+  \lstinline|Kernel#extend| to take a significant proportion ($\sim$10\%) of the
   total execution time!
 
   Upon further investigation I discovered why Treetop was instantiating so
@@ -76,23 +87,50 @@ and I am pleased to see that this was the case.
   comment}. Fortunately, this means that the parser's performance could be
   improved with better regular expressions.
 
+  I used the in-built `profile' library to perform my profiling, which just
+  needed to be included like any other library using `require'; profile adds
+  hooks to the function calls in the running code, which it uses to record
+  how long they take to execute and how many times they are called. When the
+  code finishes executing, profile outputs a table of information like so:
+
+  \begin{verbatim}[gobble=2]
+    %   cumulative   self              self     total
+   time   seconds   seconds    calls  ms/call  ms/call  name
+   12.49    25.41     25.41  1181040     0.02     0.03  Treetop::Runtime::CompiledParser#has_terminal?
+   10.45    46.67     21.26  1457515     0.01     0.03  Treetop::Runtime::CompiledParser#instantiate_node
+    8.51    63.98     17.31   842122     0.02     0.03  Treetop::Runtime::CompiledParser#terminal_parse_failure
+    6.79    77.80     13.82   119589     0.12     1.73  CSimple#_nt_function_body_item
+    6.33    90.67     12.87  1478676     0.01     0.01  Class#new
+    5.72   102.30     11.63   140154     0.08     0.60  CSimple#_nt_comment_contents
+    4.44   111.34      9.04   217330     0.04     0.10  CSimple#_nt_end_comment
+    3.75   118.96      7.62   470575     0.02     0.02  Kernel#extend
+    3.51   126.11      7.15    78088     0.09     0.74  CSimple#_nt_docstring_contents
+    2.82   131.85      5.74    66223     0.09     1.49  CSimple#_nt_directive_line
+  # [rest of output ommitted]
+
+  \end{verbatim}
+
+  I profiled my software on libavutil, which is part of ffmpeg; I selected
+  this because it was fairly small, and profile causes the code to execute
+  more slowly, due to the overhead of all the hooks used.
+
 \section{Correctness Testing}
 
 In order to assess whether my software was successfully displaying the
 documentation that it had extracted from the source code it had been run on, I
-needed to check the generated HTML documents; I opted to do this by a
-semi-automated approach, since doing it entirely manually would have taken an
-extremely long time.
+needed to check the generated HTML documents; I opted to automate this process,
+as a manual scan would have taken a long time - particularly as the process
+would have had to have been repeated for subsequent versions of the program.
+
 
 To expedite this process, I wrote some code that counted the number of
 \lstinline|/**|
 in a file and compared it to the number of documentation strings mentioned in
-the HTML output. For any file that these two numbers did not match, I
-investigated what was occurring.
+the HTML output. Files which showed a mismatch were investigated manually.
 
 I noticed quickly that there was a particular type that was being consistently
-ignored, which were the ones used by doxygen to denote the beginning \& end of a
-group of definitions that are linked; these comments are of the form
+ignored, which were the ones used by doxygen to denote the beginning and end of
+a group of definitions that are linked; these comments are of the form
 \lstinline|/** @{ */| and \lstinline|/** @} */| respectively. These comments
 do not generally contain any actual documentation, and in the cases they did
 it was successfully extracted, so I accounted for the occurrence of these in
@@ -101,11 +139,14 @@ positives, the results looked much more positive, as can be seen in the graph
 below.
 
 \noindent\makebox[\textwidth]{%
-  \includegraphics[width=160mm]{Graphs/correct.pdf}
+  \includegraphics[width=160mm]{Graphs/correct.pdf}\\
 }
+\begin{center}
+  \emph{Graph showing the results of running the code over libavutil}
+\end{center}
 
 Here, the graph is broken down into three parts, the documentation that was
-successfully displayed, those that contained grouping information \& the total
+successfully displayed, those that contained grouping information and the total
 number of documentation strings in a file. The graph shows that the majority
 of the documentation was successfully displayed.
 

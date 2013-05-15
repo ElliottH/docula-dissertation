@@ -24,9 +24,9 @@ documentation in a logical manner.
 
 This can be broken down into two smaller targets:
 \begin{enumerate}
-  \item A section capable of parsing code to extract the documentation and
+  \item A module capable of parsing code to extract the documentation and
     related information.
-  \item A section that transforms the extracted data into a document.
+  \item A module that transforms the extracted data into a document.
 \end{enumerate}
 
 The documentation produced should provide details for all functions documented,
@@ -36,8 +36,11 @@ arguments and their type from the function itself.
 Additionally, the program should require no intervention from the user to
 complete its generation process.
 
+In addition, the program should be able to generate documentation from source
+code without user intervention; this is important to ensure convenience of use.
+
 I also need to determine which language is the appropriate choice for
-implementing this project, since each will have their own strengths \&
+implementing this project, since each will have their own strengths and
 weaknesses, and how I will go about testing that everything is working as it
 should along the way. While deciding on testing strategies before programming is
 not required, it is important to test at some point in development (whether it
@@ -45,49 +48,6 @@ be throughout, at the end or both) and deciding on it beforehand ensures that it
 will not be neglected.
 
 \section{Software Architecture}
-This project consists of five parts:
-\begin{itemize}
-  \item One or more parsers, to transform the code base into an appropriate data
-    structure.
-  \item Code to process the above data structure and extract the required
-    information from the code.
-  \item Storage of the intermediate data.
-  \item Code to transform the intermediate data into one or more human-readable
-    formats.
-  \item A command line interface, for use by the user.
-\end{itemize}
-
-For the purposes of this project, I will only be implementing a parser for one
-programming language; it will need to be a simple, standardised language to be
-completed in the time available, there should also be sufficient code available
-written in the language to provide thorough test cases. I have chosen to
-implement the parser for C, as it is relatively easy to parse, and there is
-plenty of example code available on the internet.
-
-Likewise, I will be implementing one concrete output format for the program; the
-format should be one I am already familiar with and should easily support
-linking between sections. I have decided that HTML is the best fit for the
-output format, since it is easy to create \& does not require any extra tools to
-view the final result.
-
-Even though I am only implementing one of each of the above stages, this does
-not mean that I will be designing this software without other input \& output
-formats in mind; the software should be developed with a view to be expanded in
-the future, and therefore should be coded to be as modular as possible.
-
-Reprocessing all the code in a large project can become time-consuming; the data
-storage component allows us to generate documentation incrementally, avoiding
-large time penalties and allowing for documentation to be available in
-interactive time frames. This can be done by determining whether a file has
-changed since it was last parsed, if it has not there is no need to reinterpret
-the file, we can simply use the data that is already stored about it. This is
-particularly useful, as it will allow for quick incremental generation of the
-documentation, so developers using the program will find it much more convenient
-to quickly use to check that their documentation is in order.
-
-I will be following the waterfall model of development for this project, as far
-as is sensible, as maintenance is outside the scope of this project.
-
 \begin{center}
   \vspace*{5mm}
   \begin{tikzpicture}[node distance = 2cm, auto]
@@ -107,17 +67,76 @@ as is sensible, as maintenance is outside the scope of this project.
   \end{tikzpicture}
 \end{center}
 
+This project consists of five components:
+\begin{itemize}
+  \item One or more parsers, to transform the code base into an appropriate data
+    structure.
+  \item Code to process the above data structure and extract the required
+    information from the code.
+  \item Storage of the intermediate data.
+  \item Code to transform the intermediate data into one or more human-readable
+    formats.
+  \item A command line interface.
+\end{itemize}
+
+For the purposes of this project, I will only be implementing a parser for one
+programming language; it will need to be a simple, standardised language to be
+completed in the time available, there should also be sufficient code available
+written in the language to provide thorough test cases for the parser to be
+completed. I have chosen to implement the parser for C, as it is relatively easy
+to parse, and there is plenty of example code available on the internet.
+
+Likewise, I will be implementing one concrete output format for the program; the
+format should be one I am already familiar with and should easily support
+linking between sections. I have decided that HTML is the best fit for the
+output format, since it is easy to create and the result can be viewed in a
+web browser.
+
+Even though I am only implementing one of each of the above stages, this does
+not mean that I will be designing this software without other input and output
+formats in mind; the software will be developed with a view to be expanded in
+the future, and therefore should be coded to be as modular as possible.
+
+Reprocessing all the code in a large project can become time-consuming; the data
+storage component allows us to generate documentation incrementally, avoiding
+large time penalties and allowing for documentation to be available in
+interactive time frames. This can be done by determining whether a file has
+changed since it was last parsed, if it has not there is no need to reinterpret
+the file, we can simply use the data that is already stored about it. This will
+allow for quick incremental generation of the documentation, so developers using
+the program will find it much more convenient to quickly use it to check that
+their documentation is in order.
+
 The application component will act not only as an interface with the user, but
-also interact with each of the input, processing \& output components, calling
+also interact with each of the input, processing and output components, calling
 them with the appropriate options and so on. This reduces coupling between the
 other stages, since the command line component is the only one that needs
 knowledge of all the stages, allowing for increased modularity of the code.
 
+I will be following the waterfall model of development for this project, as far
+as is sensible, as maintenance is outside the scope of this project.
+
+% Waterfall Model Diagram
+\begin{center}
+  \vspace*{5mm}
+  \begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [block_larger] (requirements) {requirements};
+    \node [block_larger, below=of requirements] (design) {design};
+    \node [block_larger, below=of design] (implementation) {implementation};
+    \node [block_larger, below=of implementation] (verification) {verification};
+    % Draw edges
+    \path[line] (requirements) -- (design);
+    \path[line] (design) -- (implementation);
+    \path[line] (implementation) -- (verification);
+  \end{tikzpicture}
+\end{center}
+
 \section{Comment Format}
 In order to produce documentation from source code I need to define what
-constitutes documentation, both so that I can parse \& process it and so that
+constitutes documentation, both so that I can parse and process it and so that
 appropriate documentation is actually written. This means defining a comment
-format, I have previously used both Javadoc \& doxygen and have reviewed them
+format, I have previously used both Javadoc and doxygen and have reviewed them
 again prior to beginning this project. I have therefore kept their functionality
 and limitations in mind while designing the comment format.
 
@@ -160,7 +179,7 @@ of which can be found in the appendix):
       \item The square-bracket suffixes to \lstinline|@param| annotations are
         for describing the flow of data, that is whether the variable is only
         used for input, output or both. These are described as \lstinline|[in]|,
-        \lstinline|[out]| \& \lstinline|[in,out]| respectively. If a parameter
+        \lstinline|[out]| and \lstinline|[in,out]| respectively. If a parameter
         is absent a flow annotation, it will be assumed that it is
         \lstinline|[in]|.
         doxygen already uses this way of describing flows; Javadoc does not have
@@ -169,7 +188,7 @@ of which can be found in the appendix):
         function; this may include under what conditions it will return an error
         and what those error values may be.
     \end{itemize}
-    \item Summary \& Description sections can be applied to things other than
+    \item Summary and Description sections can be applied to things other than
       functions, the @-annotations cannot, as they would be meaningless.
 \end{itemize}
 
@@ -255,27 +274,3 @@ been written.
       \item[Functionality -] Is the program actually useful to users? This will
         be evaluated using the results collected in the user testing.
     \end{description}
-
-
-% \section{Action Plan}
-% I then created an action plan with these main aims in mind in order to ensure
-% the project's success; I will be be adopting the waterfall model to develop this
-% project, and so the plan follows that general structure.
-% \begin{enumerate}
-%   \item Research - look at existing documentation software, and identify their
-%     flaws \& attributes.
-%   \item Identify the features required in this parser, taking into account the
-%     strengths \& weaknesses identified in the previous phase to determine the
-%     functionality to be included or improved upon.
-%   \item Develop an outline for the project so that an awareness of structure and
-%     flow can form. Plan what order the code shall be written in and what order -
-%     what tests need to be performed along the way to ensure functionality.
-%   \item Choose the programming language best suited to the project - learn
-%     and/or practise the language to ensure fluency and suitability for the
-%     project.
-%   \item List and develop tests that will take place during the coding and at the
-%     end to ensure the project functions correctly.
-%   \item Begin writing and testing code - revisit plan if necessary to make
-%     alterations.
-%   \item Complete end testing and make any necessary alterations
-% \end{enumerate}

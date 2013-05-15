@@ -33,6 +33,7 @@
     \path [line] (command) -- (processing);
     \path [line] (command) -- (output);
   \end{tikzpicture}
+  \emph{The structure of my project, as decided in Chapter 2}
 \end{center}
 
 \section{The Parser}
@@ -92,9 +93,10 @@ using the methods I implemented in the classes.
   \subsection{Regression Testing}
     To ensure that I was properly implementing my grammar for C, I wrote some
     tests for my parser that would check that parsing a particular piece of code
-    would yield a valid result. This was the quickest \& easiest way of building
-    up a working grammar for the language and allowed me to be confident that
-    what I had written would function correctly as I moved forward.
+    would yield a valid result. This was the quickest and easiest way of
+    building up a working grammar for the language and allowed me to be
+    confident that what I had written would function correctly as I moved
+    forward.
 
     This was implemented using \lstinline|TestCase|, a class that is part of the
     Ruby standard library, and simply involves defining methods that execute the
@@ -145,7 +147,7 @@ using the methods I implemented in the classes.
 
     Instead of parsing function bodies, the simplified parser contains rules to
     match pairs of braces within functions, ignoring those in strings and
-    comments, to understand where functions begin \& end. With global variable
+    comments, to understand where functions begin and end. With global variable
     assignments, the parser has rules to match from an equals sign to the
     semicolon at the end of the line. These simplifications allowed for me to
     dispense with the expensive and complicated parsing of control structures
@@ -162,8 +164,8 @@ using the methods I implemented in the classes.
 \section{Handling the Data}
 After the source files have been parsed into a parse tree, the useful data can
 be extracted; using the methods that were added into the parse tree by Treetop,
-the code runs through the functions, variables \& other pieces of data and pulls
-out the needed information to be stored in the database.
+the code runs through the functions, variables and other pieces of data and
+pulls out the needed information to be stored in the database.
 
 To store the data I opted to use SQLite, as it requires no configuration to use
 and stores all data in a file, rather than on a SQL server; this means that no
@@ -208,7 +210,7 @@ after all the files have been parsed.
     resulting data was consistent; in particular, if a function is documented
     the hash containing information about the prototype will contain extra
     information. Uniting the arguments with their documentation proved
-    interesting, and I had to write the code for managing it several times
+    interesting, and I had to attempt to write code to manage it several times
     before I created a solution that provided an appropriate output regardless
     of input.
 
@@ -259,14 +261,15 @@ after all the files have been parsed.
         includes easily.
 
         To determine if one file refers to another, I decided to check whether a
-        following the path described in the include exists, relative to that
-        file. This is by no means a fool-proof solution, as it does not take
-        into account the include paths passed to a compiler, but the only other
-        sensible solution to this problem would be to also parse the Makefile
-        (or similar file in another build system) to extract the include paths
-        used. Given the number of different build systems used and the time
-        taken to implement another grammar for parsing any of them, I concluded
-        that this was not a valid solution in the time available.
+        following the path described in the include results an a file that
+        exists, relative to that file. This is by no means a fool-proof
+        solution, as it does not take into account the include paths passed to a
+        compiler, but the only other sensible solution to this problem would be
+        to also parse the Makefile (or similar file in another build system) to
+        extract the include paths used. Given the number of different build
+        systems used and the time taken to implement another grammar for parsing
+        any of them, I concluded that this was not a valid solution in the time
+        available.
 
   \subsection{Storage}
 
@@ -290,7 +293,7 @@ after all the files have been parsed.
     to the file it came from. The diagram below shows the layout of my
     database, with the arrows representing the links between tables with foreign
     keys; all bar two of the tables reference the ID of the file they are
-    contained in, `arguments' \& `elements' refer to the ID of the structure
+    contained in, `arguments' and `elements' refer to the ID of the structure
     they were contained in, which in turn refers to the file.
 
     \noindent\makebox[\textwidth]{%
@@ -313,28 +316,32 @@ after all the files have been parsed.
     chances for error; it also eliminates the time it would take to query each
     table in the database and work out what to remove.
 
+    The files are stored in the database by their path, relative to where the
+    software is executed; this means that two files with the same name cannot
+    interfere with one another, since they are distinct as far as their paths
+    are concerned.
+
     When a source file is updated, and the software re-run, the hash of the file
     no longer matches the one stored in the database; at this point the entry
     from the files table is deleted, thereby removing all the other data
     relating to that file from the database due to the cascading deletion. The
-    details about the file are then inserted into the database as before. This
-    approach is much simpler than the alternative, which would involve
-    updating some entries, inserting others and removing out-dated
+    details of the new version of this file are then inserted into the database
+    as before. This approach is much simpler than the alternative, which would
+    involve updating some entries, inserting others and removing out-dated
     information. In addition to being more complicated, this method would also
     be more error-prone; since leaving behind stale information, such as an
     entry in the arguments table, could lead to the function being displayed
     in the output as having extra arguments.
 
     The structure of my database made it easy to define powerful queries in
-    SQL, that gave me the data I needed much easier than if I'd extracted all
+    SQL, that gave me the data I needed more easily than if I'd extracted all
     the data separately and combined it in Ruby. Database engines are also
-    much more optimised towards this type of data manipulation that a normal
-    programming language would be, allowing it to execute quicker than if I'd
-    done it in Ruby. I could have made my data retrieval faster by creating
-    indices on some of the columns that were commonly queried against in the
-    database; however the number of insertions into the database is much
-    higher than the queries against the data, so the end result would have
-    been slower due to the insertion overhead with indices.
+    optimised for this type of data manipulation. I could have made my data
+    retrieval faster by creating indices on some of the columns that were
+    commonly queried against in the database; however the number of insertions
+    into the database is much higher than the queries against the data, so I
+    felt that the end result have been likely to have been slower due to the
+    insertion overhead with indices.
 
     \begin{code}[language=sql, gobble=6]
       SELECT types.*, files.path FROM
@@ -344,7 +351,7 @@ after all the files have been parsed.
        ) AS 'types' INNER JOIN files ON types.file_id = files.id
     \end{code}
 
-    This SQL statement looks up a type in the \lstinline|typedef| \&
+    This SQL statement looks up a type in the \lstinline|typedef| and
     \lstinline|define| tables, unioning the two result sets together to ensure
     that we get results from either, and then performs an inner join of these
     results against the files table to get the information on the file that the
@@ -395,14 +402,9 @@ readability of the code, however there is only so much this can be done.
 
 The function above allows me to create a new row in a table
 \lstinline|row_with_id("some_id", ["item1", "item2"])| when I need one, rather
-than repeating the same HTML over \& over. String interpolation also helps the
+than repeating the same HTML over and over. String interpolation also helps the
 situation greatly, as it allowed me to write much more concise code; the above
-code without it would have been much more verbose and complicated, line 5 would
-have been:
-
-\begin{code}[language=ruby, gobble=2]
-  "<tr id=\"" << id.to_s << "\"><td>" << entries.join("</td><td>") << "</td></tr>\n"
-\end{code}
+code without it would have been much more verbose and complicated.
 
 This would have also been more expensive to compute, as it requires mutating the
 string four times, rather than just creating it correctly in the first place.
@@ -410,8 +412,11 @@ This is one example of a reason I chose Ruby in my proposal.
 
 While generating the output the code checks if `style.css' already exists in the
 output directory, if there is not one already present, a default one is created.
-All important HTML elements in the output files have IDs or classes associated
-with them, allowing for convenient styling of the documents.
+This file is referred to in the HTML files, and contains all the relevant CSS
+markup needed by the browser to layout the documentation in a sensible manner.
+This can be modified or replaced by the user to suit their needs; all important
+HTML elements in the output files have IDs or classes associated with them,
+allowing for convenient styling of the documents.
 
 \noindent\makebox[\textwidth]{%
       \includegraphics[width=160mm]{output.png}
